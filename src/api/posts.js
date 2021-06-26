@@ -1,22 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const {
-  findAllPosts,
-  deleteAllPosts,
-  createPost,
+  getAllPosts,
+  adminCreatePost,
+  adminDeleteEverything,
 } = require("../services/post_service");
 
 router.get("/", async (req, res) => {
-  res.send(await findAllPosts());
+  res.send(await getAllPosts());
 });
 
 router.get("/new", async (req, res) => {
-  await createPost();
+  await adminCreatePost();
   res.redirect(301, "/posts");
 });
 
 router.get("/delete", async (req, res) => {
-  await deleteAllPosts();
+  await adminDeleteEverything();
   res.redirect(301, "/posts");
 });
 

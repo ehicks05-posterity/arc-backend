@@ -4,28 +4,38 @@ const { getFakeUser, getFakePost, getFakeComments } = require("./utils");
 
 const prisma = new PrismaClient();
 
-const findAllPosts = async () => {
+const getAllPosts = async () => {
   return await prisma.post.findMany({
+    include: { comments: true, author: true },
+    orderBy: { createdAt: "desc" },
+    take: 10,
+  });
+};
+
+const getPost = async (id) => {
+  return await prisma.post.findUnique({
+    where: { id: id },
     include: { comments: true, author: true },
   });
 };
 
-const deleteAllPosts = async () => {
-  const posts = await prisma.post.findMany();
+const createPost = async (postInput) => {
+  const post = await prisma.post.create({
+    data: postInput,
+    include: { comments: true, author: true },
+  });
 
-  await Promise.all(
-    posts.map(async (post) => {
-      await prisma.comment.deleteMany({ where: { postId: post.id } });
-    })
-  );
+  return post;
+};
 
-  await prisma.post.deleteMany();
-  await prisma.user.deleteMany();
+const deletePost = async (id) => {
+  await prisma.comment.deleteMany({ where: { postId: id } });
+  await prisma.post.delete({ where: { id: id } });
 
   return;
 };
 
-const createPost = async () => {
+const adminCreatePost = async () => {
   const post = await prisma.post.create({
     data: {
       ...getFakePost(),
@@ -50,8 +60,19 @@ const createPost = async () => {
   return await prisma.post.findUnique({ where: { id: post.id } });
 };
 
+const adminDeleteEverything = async () => {
+  await prisma.comment.deleteMany();
+  await prisma.post.deleteMany();
+  await prisma.user.deleteMany();
+
+  return;
+};
+
 module.exports = {
-  findAllPosts,
-  deleteAllPosts,
+  getAllPosts,
+  getPost,
   createPost,
+  deletePost,
+  adminCreatePost,
+  adminDeleteEverything,
 };
