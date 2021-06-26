@@ -7,51 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Direction {
-  id        String   @id @default(uuid())
-  text      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  recipe    Recipe   @relation(fields: [recipeId], references: [id])
-  recipeId  String
-}
-
-model Ingredient {
-  id        String   @id @default(uuid())
-  name      String
-  quantity  Int
-  unit      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  recipe    Recipe   @relation(fields: [recipeId], references: [id])
-  recipeId  String
-}
-
-model Recipe {
-  id          String   @id @default(uuid())
-  name        String
-  emoji       String
-  description String
-  difficulty  Int
-  cookingTime String
-  servings    Int
-  course      String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  directions  Direction[]
-  ingredients Ingredient[]
-  author      User         @relation(fields: [authorId], references: [id])
-  authorId    String
-}
-
 model User {
-  id        String   @id @default(uuid())
-  email     String
+  id        String    @id @default(uuid())
   username  String
   password  String
   role      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  recipes   Recipe[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  posts     Post[]
+  comments  Comment[]
+}
+
+model Post {
+  id        String    @id @default(uuid())
+  content   String
+  link      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  String
+  comments  Comment[]
+}
+
+model Comment {
+  id              String    @id @default(uuid())
+  content         String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  post            Post      @relation(fields: [postId], references: [id])
+  postId          String
+  parentComment   Comment?  @relation(fields: [parentCommentId], references: [id])
+  parentCommentId String?
+  author          User      @relation(fields: [authorId], references: [id])
+  authorId        String
+  Comment         Comment[] @relation("CommentToComment")
 }
