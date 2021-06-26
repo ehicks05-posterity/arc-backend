@@ -19,13 +19,11 @@ const getPost = async (id) => {
   });
 };
 
-const createPost = async (postInput) => {
-  const post = await prisma.post.create({
-    data: postInput,
+const createPost = async (data) => {
+  return await prisma.post.create({
+    data: data,
     include: { comments: true, author: true },
   });
-
-  return post;
 };
 
 const deletePost = async (id) => {
