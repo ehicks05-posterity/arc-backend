@@ -8,7 +8,7 @@ const postsRoutes = require("./api/posts");
 const commentsRoutes = require("./api/comments");
 
 const app = express();
-app.use(morgan("combined"));
+app.use(morgan("dev"));
 
 // completely disable cache
 app.use((req, res, next) => {
