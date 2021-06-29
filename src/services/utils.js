@@ -1,19 +1,20 @@
 const faker = require("faker");
 
 const getFakeUser = () => ({
-  username: faker.datatype.string(),
-  password: faker.datatype.string(),
+  username: faker.internet.userName(),
+  password: faker.internet.password(),
   role: faker.datatype.string(),
 });
 
 const getFakePost = () => ({
-  content: faker.datatype.string(),
-  link: faker.datatype.string(),
+  title: faker.lorem.sentence(),
+  content: faker.lorem.paragraphs(),
+  link: faker.internet.url(),
 });
 
 const getFakeComment = () => {
   return {
-    content: faker.datatype.string(),
+    content: faker.lorem.paragraphs(),
   };
 };
 

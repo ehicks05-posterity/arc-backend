@@ -52,7 +52,10 @@ const adminCreatePost = async () => {
 
   await prisma.comment.update({
     where: { id: post.comments[0].id },
-    data: { parentCommentId: post.comments[1].id },
+    data: {
+      parentCommentId: post.comments[1].id,
+      level: post.comments[0].level + 1,
+    },
   });
 
   return await prisma.post.findUnique({ where: { id: post.id } });
