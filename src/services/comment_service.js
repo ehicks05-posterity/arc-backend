@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 const getAllComments = async () => {
   return await prisma.comment.findMany({
-    include: { author: true },
+    include: { author: { select: { id: true, username: true } } },
     orderBy: { createdAt: "desc" },
     take: 10,
   });
@@ -13,14 +13,14 @@ const getAllComments = async () => {
 const getComment = async (id) => {
   return await prisma.comment.findUnique({
     where: { id: id },
-    include: { author: true },
+    include: { author: { select: { id: true, username: true } } },
   });
 };
 
 const createComment = async (data) => {
   return await prisma.comment.create({
     data: data,
-    include: { author: true },
+    include: { author: { select: { id: true, username: true } } },
   });
 };
 
