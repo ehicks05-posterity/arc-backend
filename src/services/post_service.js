@@ -6,7 +6,12 @@ const prisma = new PrismaClient();
 
 const getAllPosts = async () => {
   return await prisma.post.findMany({
-    include: { comments: true, author: true },
+    include: {
+      comments: {
+        include: { author: { select: { id: true, username: true } } },
+      },
+      author: { select: { id: true, username: true } },
+    },
     orderBy: { createdAt: "desc" },
     take: 10,
   });
@@ -15,14 +20,20 @@ const getAllPosts = async () => {
 const getPost = async (id) => {
   return await prisma.post.findUnique({
     where: { id: id },
-    include: { comments: true, author: true },
+    include: {
+      comments: true,
+      author: { select: { id: true, username: true } },
+    },
   });
 };
 
 const createPost = async (data) => {
   return await prisma.post.create({
     data: data,
-    include: { comments: true, author: true },
+    include: {
+      comments: true,
+      author: { select: { id: true, username: true } },
+    },
   });
 };
 
