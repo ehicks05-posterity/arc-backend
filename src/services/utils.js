@@ -9,7 +9,7 @@ const getFakeUser = () => ({
 const getFakePost = () => ({
   title: faker.lorem.sentence(),
   content: faker.lorem.paragraphs(),
-  link: faker.internet.url(),
+  link: 'https://www.google.com',
 });
 
 const getFakeComment = () => {
