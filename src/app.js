@@ -1,4 +1,5 @@
 const morgan = require("morgan");
+const bodyParser = require("body-parser");
 
 require("dotenv").config();
 
@@ -6,9 +7,17 @@ const express = require("express");
 
 const postsRoutes = require("./api/posts");
 const commentsRoutes = require("./api/comments");
+const usersRoutes = require("./api/users");
 
 const app = express();
+
 app.use(morgan("dev"));
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
+app.use(bodyParser.json());
 
 // completely disable cache
 app.use((req, res, next) => {
@@ -21,6 +30,7 @@ app.get("/", (req, res) => {
 });
 app.use("/posts", postsRoutes);
 app.use("/comments", commentsRoutes);
+app.use("/users", usersRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Example app listening at http://localhost:${process.env.PORT}`);

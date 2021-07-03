@@ -33,6 +33,7 @@ model Post {
 model Comment {
   id              String    @id @default(uuid())
   content         String
+  deleted         Boolean   @default(false)
   level           Int       @default(0)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -40,7 +41,7 @@ model Comment {
   postId          String
   parentComment   Comment?  @relation(fields: [parentCommentId], references: [id])
   parentCommentId String?
-  author          User      @relation(fields: [authorId], references: [id])
-  authorId        String
-  Comment         Comment[] @relation("CommentToComment")
+  author          User?     @relation(fields: [authorId], references: [id])
+  authorId        String?
+  comments        Comment[] @relation("CommentToComment")
 }

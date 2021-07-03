@@ -1,29 +1,29 @@
 const express = require("express");
 const router = express.Router();
 const {
-  getAllComments,
-  getComment,
-  createComment,
-  softDeleteComment,
-} = require("../services/comment_service");
+  getAllUsers,
+  getUser,
+  createUser,
+  softDeleteUser,
+} = require("../services/user_service");
 
 router.get("/", async (req, res) => {
-  res.send(await getAllComments());
+  res.send(await getAllUsers());
 });
 
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
-  res.send(await getComment(id));
+  res.send(await getUser(id));
 });
 
 router.post("/", async (req, res) => {
   const data = req.body;
-  res.send(await createComment(data));
+  res.send(await createUser(data));
 });
 
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
-  res.send(await softDeleteComment(id));
+  res.send(await softDeleteUser(id));
 });
 
 module.exports = router;
