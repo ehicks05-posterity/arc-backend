@@ -19,7 +19,14 @@ const getUser = async (id) => {
       username: true,
       createdAt: true,
       updatedAt: true,
-      posts: { include: { author: { select: { id: true, username: true } } } },
+      posts: {
+        include: {
+          comments: {
+            include: { author: { select: { id: true, username: true } } },
+          },
+          author: { select: { id: true, username: true } },
+        },
+      },
       comments: {
         include: { author: { select: { id: true, username: true } } },
       },
