@@ -8,40 +8,70 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  username  String
-  password  String
-  role      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  posts     Post[]
-  comments  Comment[]
+  id           String            @id @default(uuid())
+  username     String
+  password     String
+  role         String
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  posts        Post[]
+  comments     Comment[]
+  postVotes    UserPostVote[]
+  commentVotes UserCommentVote[]
 }
 
 model Post {
-  id        String    @id @default(uuid())
+  id        String         @id @default(uuid())
   title     String
   content   String
   link      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  author    User      @relation(fields: [authorId], references: [id])
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  author    User           @relation(fields: [authorId], references: [id])
   authorId  String
   comments  Comment[]
+  votes     UserPostVote[]
+  score     Int
 }
 
 model Comment {
-  id              String    @id @default(uuid())
+  id              String            @id @default(uuid())
   content         String
-  deleted         Boolean   @default(false)
-  level           Int       @default(0)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  post            Post      @relation(fields: [postId], references: [id])
+  deleted         Boolean           @default(false)
+  level           Int               @default(0)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  post            Post              @relation(fields: [postId], references: [id])
   postId          String
-  parentComment   Comment?  @relation(fields: [parentCommentId], references: [id])
+  parentComment   Comment?          @relation(fields: [parentCommentId], references: [id])
   parentCommentId String?
-  author          User?     @relation(fields: [authorId], references: [id])
+  author          User?             @relation(fields: [authorId], references: [id])
   authorId        String?
-  comments        Comment[] @relation("CommentToComment")
+  comments        Comment[]         @relation("CommentToComment")
+  votes           UserCommentVote[]
+  score           Int
+}
+
+model UserPostVote {
+  userId String
+  postId String
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+
+  isUpvote Boolean
+
+  @@id([userId, postId])
+}
+
+model UserCommentVote {
+  userId    String
+  commentId String
+
+  user User    @relation(fields: [userId], references: [id])
+  post Comment @relation(fields: [commentId], references: [id])
+
+  isUpvote Boolean
+
+  @@id([userId, commentId])
 }

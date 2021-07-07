@@ -30,6 +30,8 @@ const getUser = async (id) => {
       comments: {
         include: { author: { select: { id: true, username: true } } },
       },
+      postVotes: true,
+      commentVotes: true,
     },
   });
 };
