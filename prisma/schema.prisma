@@ -2,11 +2,16 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator nexusPrisma {
+  provider = "nexus-prisma"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+/// A User...
 model User {
   id           String            @id @default(uuid())
   username     String
@@ -31,7 +36,7 @@ model Post {
   authorId  String
   comments  Comment[]
   votes     UserPostVote[]
-  score     Int
+  score     Int            @default(0)
 }
 
 model Comment {
@@ -49,7 +54,7 @@ model Comment {
   authorId        String?
   comments        Comment[]         @relation("CommentToComment")
   votes           UserCommentVote[]
-  score           Int
+  score           Int               @default(0)
 }
 
 model UserPostVote {
