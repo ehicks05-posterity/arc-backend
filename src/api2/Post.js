@@ -1,4 +1,4 @@
-const { objectType, queryField, list } = require("nexus");
+const { objectType, queryField, list, idArg } = require("nexus");
 const { Post } = require("nexus-prisma");
 
 module.exports.Post = objectType({
@@ -18,5 +18,13 @@ module.exports.getPosts = queryField("getPosts", {
   type: list("Post"),
   resolve(_, args, ctx) {
     return ctx.prisma.post.findMany();
+  },
+});
+
+module.exports.getPostById = queryField("getPostById", {
+  type: "Post",
+  args: { id: idArg() },
+  resolve(_, args, ctx) {
+    return ctx.prisma.post.findUnique({ where: { id: args.id } });
   },
 });
