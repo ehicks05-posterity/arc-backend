@@ -36,7 +36,7 @@ model Post {
   authorId  String
   comments  Comment[]
   votes     UserPostVote[]
-  score     Int            @default(0)
+  score     Float          @default(0)
 }
 
 model Comment {
@@ -54,7 +54,7 @@ model Comment {
   authorId        String?
   comments        Comment[]         @relation("CommentToComment")
   votes           UserCommentVote[]
-  score           Int               @default(0)
+  score           Float             @default(0)
 }
 
 model UserPostVote {
