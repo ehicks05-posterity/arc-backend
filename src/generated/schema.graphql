@@ -2,30 +2,69 @@
 ### Do not make changes to this file directly
 
 
+type Comment {
+  author: User
+  comments: [Comment!]!
+  content: String!
+  createdAt: DateTime!
+  deleted: Boolean!
+  id: ID!
+  level: Int!
+  parentComment: Comment
+  post: Post!
+  score: Float!
+  updatedAt: DateTime!
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime
 
+type Mutation {
+  createComment(input: createCommentInput): Comment
+  createPost: Post
+  createUser: User
+  deleteComment(id: ID): Comment
+  deletePost(id: ID): Post
+  deleteUser(id: ID): User
+}
+
 type Post {
   author: User!
+  commentCount: Int
+  comments: [Comment!]!
   content: String!
   createdAt: DateTime!
   id: ID!
+  netVotes: Int
+  score: Float!
   title: String!
   updatedAt: DateTime!
 }
 
 type Query {
+  getCommentById(id: ID): Comment
+  getComments: [Comment]
+  getPostById(id: ID): Post
   getPosts: [Post]
   getUser(id: ID): User
+  getUsers: [User]
 }
 
 """A User..."""
 type User {
+  comments: [Comment!]!
   createdAt: DateTime!
   id: ID!
   posts: [Post!]!
   updatedAt: DateTime!
   username: String!
+}
+
+input createCommentInput {
+  content: String
+  level: Int
+  parentCommentId: String
+  postId: String!
 }

@@ -1,11 +1,11 @@
 const { DateTime } = require("./Datetime");
-const { Post, getPosts } = require("./Post");
-const { User, getUser } = require("./User");
+const PostTypes = require("./Post");
+const CommentTypes = require("./Comment");
+const UserTypes = require("./User");
 
 module.exports.types = {
   DateTime,
-  Post,
-  getPosts,
-  User,
-  getUser,
+  ...PostTypes,
+  ...CommentTypes,
+  ...UserTypes,
 };

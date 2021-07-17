@@ -1,22 +1,14 @@
 const morgan = require("morgan");
-
-require("dotenv").config();
-
 const express = require("express");
-
-const postsRoutes = require("./api/posts");
-const commentsRoutes = require("./api/comments");
-const usersRoutes = require("./api/users");
-
-const app = express();
-
+require("dotenv").config();
 require("./apollo");
-
-// AUTH
 const jwt = require("express-jwt");
 // const jwtAuthz = require("express-jwt-authz");
 const jwksRsa = require("jwks-rsa");
 
+const app = express();
+
+// AUTH
 // Authorization middleware. When used, the
 // Access Token must exist and be verified against
 // the Auth0 JSON Web Key Set
@@ -39,13 +31,10 @@ const checkJwt = jwt({
 // END AUTH
 
 app.use(morgan("dev"));
-
 // parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: false }));
-
 // parse application/json
 app.use(express.json());
-
 // completely disable cache
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
@@ -56,15 +45,10 @@ app.get("/", (req, res) => {
   res.send("See you at the party Richter!");
 });
 app.get("/me", checkJwt, (req, res) => {
-  console.log("yo");
   res.json({
-    message:
-      "Hello from a private endpoint! You need to be authenticated to see this.",
+    message: "Hello! This is an authenticated route.",
   });
 });
-app.use("/posts", postsRoutes);
-app.use("/comments", commentsRoutes);
-app.use("/users", usersRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Example app listening at http://localhost:${process.env.PORT}`);
