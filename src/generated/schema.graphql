@@ -37,6 +37,7 @@ type Post {
   content: String!
   createdAt: DateTime!
   id: ID!
+  link: String!
   netVotes: Int
   score: Float!
   title: String!

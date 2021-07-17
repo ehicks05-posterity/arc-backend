@@ -8,6 +8,7 @@ module.exports.Post = objectType({
   definition(t) {
     t.field(Post.id);
     t.field(Post.title);
+    t.field(Post.link);
     t.field(Post.content);
     t.field(Post.author);
     t.field(Post.comments);

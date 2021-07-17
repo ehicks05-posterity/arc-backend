@@ -63,6 +63,7 @@ export interface NexusGenObjects {
     content: string; // String!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: string; // ID!
+    link: string; // String!
     score: number; // Float!
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
@@ -115,6 +116,7 @@ export interface NexusGenFieldTypes {
     content: string; // String!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: string; // ID!
+    link: string; // String!
     netVotes: number | null; // Int
     score: number; // Float!
     title: string; // String!
@@ -167,6 +169,7 @@ export interface NexusGenFieldTypeNames {
     content: 'String'
     createdAt: 'DateTime'
     id: 'ID'
+    link: 'String'
     netVotes: 'Int'
     score: 'Float'
     title: 'String'
