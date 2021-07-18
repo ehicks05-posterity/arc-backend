@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["orderByRelation"]
 }
 
 generator nexusPrisma {
@@ -37,6 +38,7 @@ model Post {
   authorId  String
   comments  Comment[]
   votes     UserPostVote[]
+  netVotes  Int            @default(0)
   score     Float          @default(0)
 }
 
@@ -65,7 +67,7 @@ model UserPostVote {
   user User @relation(fields: [userId], references: [id])
   post Post @relation(fields: [postId], references: [id])
 
-  isUpvote Boolean
+  direction Int
 
   @@id([userId, postId])
 }
