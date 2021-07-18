@@ -1,4 +1,11 @@
-const { objectType, queryField, mutationField, list, idArg } = require("nexus");
+const {
+  objectType,
+  queryField,
+  mutationField,
+  list,
+  idArg,
+  enumType,
+} = require("nexus");
 const { Post } = require("nexus-prisma");
 const { adminCreatePost } = require("./utils");
 
@@ -21,20 +28,28 @@ module.exports.Post = objectType({
     });
     t.field(Post.createdAt);
     t.field(Post.updatedAt);
-    t.field("netVotes", {
-      type: "Int",
-      resolve() {
-        return Math.round(Math.random() * 1000);
-      },
-    });
+    t.field(Post.netVotes);
     t.field(Post.score);
   },
 });
 
+module.exports.Sort = enumType({
+  name: "Sort",
+  members: ["HOT", "TOP", "NEW"],
+});
+
+const sortOptionToQuery = {
+  HOT: { orderBy: { score: "desc" } },
+  TOP: { orderBy: { netVotes: "desc" } },
+  NEW: { orderBy: { createdAt: "desc" } },
+};
+
 module.exports.getPosts = queryField("getPosts", {
   type: list("Post"),
+  args: { sort: "Sort" },
   resolve(_, args, ctx) {
-    return ctx.prisma.post.findMany({ orderBy: { createdAt: "desc" } });
+    const query = sortOptionToQuery[args.sort];
+    return ctx.prisma.post.findMany(query);
   },
 });
 

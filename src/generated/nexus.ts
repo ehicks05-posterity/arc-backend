@@ -37,6 +37,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  Sort: "HOT" | "NEW" | "TOP"
 }
 
 export interface NexusGenScalars {
@@ -64,6 +65,7 @@ export interface NexusGenObjects {
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: string; // ID!
     link: string; // String!
+    netVotes: number; // Int!
     score: number; // Float!
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
@@ -85,7 +87,7 @@ export interface NexusGenUnions {
 
 export type NexusGenRootTypes = NexusGenObjects
 
-export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
+export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnums
 
 export interface NexusGenFieldTypes {
   Comment: { // field return type
@@ -117,7 +119,7 @@ export interface NexusGenFieldTypes {
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: string; // ID!
     link: string; // String!
-    netVotes: number | null; // Int
+    netVotes: number; // Int!
     score: number; // Float!
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
@@ -215,6 +217,9 @@ export interface NexusGenArgTypes {
     getPostById: { // args
       id?: string | null; // ID
     }
+    getPosts: { // args
+      sort?: NexusGenEnums['Sort'] | null; // Sort
+    }
     getUser: { // args
       id?: string | null; // ID
     }
@@ -231,7 +236,7 @@ export type NexusGenObjectNames = keyof NexusGenObjects;
 
 export type NexusGenInputNames = keyof NexusGenInputs;
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = keyof NexusGenEnums;
 
 export type NexusGenInterfaceNames = never;
 

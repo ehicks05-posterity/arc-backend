@@ -38,7 +38,7 @@ type Post {
   createdAt: DateTime!
   id: ID!
   link: String!
-  netVotes: Int
+  netVotes: Int!
   score: Float!
   title: String!
   updatedAt: DateTime!
@@ -48,9 +48,15 @@ type Query {
   getCommentById(id: ID): Comment
   getComments: [Comment]
   getPostById(id: ID): Post
-  getPosts: [Post]
+  getPosts(sort: Sort): [Post]
   getUser(id: ID): User
   getUsers: [User]
+}
+
+enum Sort {
+  HOT
+  NEW
+  TOP
 }
 
 """A User..."""
