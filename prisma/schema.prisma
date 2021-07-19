@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["orderByRelation"]
 }
 
@@ -18,8 +18,8 @@ model User {
   username     String
   password     String
   role         String
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+  createdAt    DateTime          @default(now()) @db.Timestamptz
+  updatedAt    DateTime          @updatedAt @db.Timestamptz
   posts        Post[]
   comments     Comment[]
   postVotes    UserPostVote[]
@@ -32,8 +32,8 @@ model Post {
   content   String
   link      String
   deleted   Boolean        @default(false)
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  createdAt DateTime       @default(now()) @db.Timestamptz
+  updatedAt DateTime       @updatedAt @db.Timestamptz
   author    User           @relation(fields: [authorId], references: [id])
   authorId  String
   comments  Comment[]
@@ -47,8 +47,8 @@ model Comment {
   content         String
   deleted         Boolean           @default(false)
   level           Int               @default(0)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  createdAt       DateTime          @default(now()) @db.Timestamptz
+  updatedAt       DateTime          @updatedAt @db.Timestamptz
   post            Post              @relation(fields: [postId], references: [id])
   postId          String
   parentComment   Comment?          @relation(fields: [parentCommentId], references: [id])
@@ -67,7 +67,9 @@ model UserPostVote {
   user User @relation(fields: [userId], references: [id])
   post Post @relation(fields: [postId], references: [id])
 
-  direction Int
+  direction Int      @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
 
   @@id([userId, postId])
 }
@@ -79,7 +81,9 @@ model UserCommentVote {
   user User    @relation(fields: [userId], references: [id])
   post Comment @relation(fields: [commentId], references: [id])
 
-  isUpvote Boolean
+  direction Int      @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
 
   @@id([userId, commentId])
 }
