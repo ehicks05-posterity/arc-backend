@@ -39,23 +39,30 @@ module.exports.Post = objectType({
   },
 });
 
+const SORTS = ["HOT", "TOP", "NEW"];
+
 module.exports.Sort = enumType({
   name: "Sort",
-  members: ["HOT", "TOP", "NEW"],
+  members: SORTS,
 });
-
-const sortOptionToQuery = {
-  HOT: { orderBy: { score: "desc" } },
-  TOP: { orderBy: { netVotes: "desc" } },
-  NEW: { orderBy: { createdAt: "desc" } },
-};
 
 module.exports.getPosts = queryField("getPosts", {
   type: list("Post"),
   args: { sort: "Sort" },
   resolve(_, args, ctx) {
-    const query = sortOptionToQuery[args.sort];
-    return ctx.prisma.post.findMany(query);
+    const { sort } = args;
+    if (sort === "HOT") {
+      return ctx.prisma.post.findMany({ orderBy: { score: "desc" } });
+    }
+    if (sort === "NEW") {
+      return ctx.prisma.post.findMany({ orderBy: { createdAt: "desc" } });
+    }
+    if (sort === "TOP") {
+      return ctx.prisma.$queryRaw(
+        'select * from "Post" order by getNetVotes(id, "createdAt");'
+      );
+    }
+    return ctx.prisma.post.findMany({ orderBy: { score: "desc" } });
   },
 });
 
