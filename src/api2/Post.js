@@ -28,7 +28,13 @@ module.exports.Post = objectType({
     });
     t.field(Post.createdAt);
     t.field(Post.updatedAt);
-    t.field(Post.netVotes);
+    t.nonNull.int("netVotes", {
+      async resolve(root, _args, ctx) {
+        const result = await ctx.prisma
+          .$queryRaw`select getNetVotes(id, "createdAt") as "netVotes" from "Post" where id = ${root.id};`;
+        return result[0].netVotes;
+      },
+    });
     t.field(Post.score);
   },
 });

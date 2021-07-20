@@ -65,7 +65,6 @@ export interface NexusGenObjects {
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: string; // ID!
     link: string; // String!
-    netVotes: number; // Int!
     score: number; // Float!
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
