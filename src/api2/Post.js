@@ -59,7 +59,7 @@ module.exports.getPosts = queryField("getPosts", {
     }
     if (sort === "TOP") {
       return ctx.prisma.$queryRaw(
-        'select * from "Post" order by getNetVotes(id, "createdAt");'
+        'select * from "Post" order by getNetVotes(id, "createdAt") desc;'
       );
     }
     return ctx.prisma.post.findMany({ orderBy: { score: "desc" } });
