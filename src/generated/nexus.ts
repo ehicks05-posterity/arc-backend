@@ -34,6 +34,11 @@ export interface NexusGenInputs {
     parentCommentId?: string | null; // String
     postId: string; // String!
   }
+  createPostInput: { // input type
+    content?: string | null; // String
+    link?: string | null; // String
+    title: string; // String!
+  }
 }
 
 export interface NexusGenEnums {
@@ -103,6 +108,7 @@ export interface NexusGenFieldTypes {
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   Mutation: { // field return type
+    adminCreatePost: NexusGenRootTypes['Post'] | null; // Post
     createComment: NexusGenRootTypes['Comment'] | null; // Comment
     createPost: NexusGenRootTypes['Post'] | null; // Post
     createUser: NexusGenRootTypes['User'] | null; // User
@@ -156,6 +162,7 @@ export interface NexusGenFieldTypeNames {
     updatedAt: 'DateTime'
   }
   Mutation: { // field return type name
+    adminCreatePost: 'Post'
     createComment: 'Comment'
     createPost: 'Post'
     createUser: 'User'
@@ -198,6 +205,9 @@ export interface NexusGenArgTypes {
   Mutation: {
     createComment: { // args
       input?: NexusGenInputs['createCommentInput'] | null; // createCommentInput
+    }
+    createPost: { // args
+      input?: NexusGenInputs['createPostInput'] | null; // createPostInput
     }
     deleteComment: { // args
       id?: string | null; // ID

@@ -28,6 +28,8 @@ const adminCreatePost = async () => {
     },
   });
 
+  // todo grab users and randomly vote
+
   return await prisma.post.findUnique({ where: { id: post.id } });
 };
 

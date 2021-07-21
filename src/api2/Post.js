@@ -5,6 +5,7 @@ const {
   list,
   idArg,
   enumType,
+  inputObjectType,
 } = require("nexus");
 const { Post } = require("nexus-prisma");
 const { adminCreatePost } = require("./utils");
@@ -74,7 +75,32 @@ module.exports.getPostById = queryField("getPostById", {
   },
 });
 
+module.exports.createPostInput = inputObjectType({
+  name: "createPostInput",
+  definition(t) {
+    t.nonNull.string("title");
+    t.string("link");
+    t.string("content");
+  },
+});
+
 module.exports.createPost = mutationField("createPost", {
+  type: "Post",
+  args: { input: this.createPostInput },
+  resolve(_, args, ctx) {
+    const { title, link, content } = args;
+    const authorId = "";
+    const data = {
+      author: { connect: { id: authorId } },
+      title,
+      link,
+      content,
+    };
+    return ctx.prisma.post.create({ data });
+  },
+});
+
+module.exports.adminCreatePost = mutationField("adminCreatePost", {
   type: "Post",
   resolve() {
     return adminCreatePost();

@@ -22,8 +22,9 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 scalar DateTime
 
 type Mutation {
+  adminCreatePost: Post
   createComment(input: createCommentInput): Comment
-  createPost: Post
+  createPost(input: createPostInput): Post
   createUser: User
   deleteComment(id: ID): Comment
   deletePost(id: ID): Post
@@ -74,4 +75,10 @@ input createCommentInput {
   level: Int
   parentCommentId: String
   postId: String!
+}
+
+input createPostInput {
+  content: String
+  link: String
+  title: String!
 }
