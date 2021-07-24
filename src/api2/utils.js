@@ -39,7 +39,7 @@ const adminNuke = async () => {
 const POST_COUNT = 10;
 const USER_COUNT = 1000;
 const COMMENTS_PER_POST = 10;
-const VOTES_PER_POST = -1;
+const MAX_VOTES_PER_POST = USER_COUNT;
 const VOTES_PER_COMMENT = 10;
 
 const adminSeed = async () => {
@@ -86,13 +86,16 @@ const adminSeed = async () => {
   // for each post, create votes
   console.log("creating userPostVotes...");
   const userPostVotePromises = posts.map(async (p) => {
-    const UPVOTE_RATIO_FOR_POST = Math.random();
-    const userPostVotePerPostPromises = users.map(async (u) => {
+    const UPVOTE_RATIO_FOR_POST = Math.random() / 2 + 0.5; // targeting 0.5-1.0
+    const userPostVotePerPostPromises = _.sampleSize(
+      users,
+      Math.random() * MAX_VOTES_PER_POST
+    ).map(async (u) => {
       await prisma.userPostVote.create({
         data: {
           post: { connect: { id: p.id } },
           user: { connect: { id: u.id } },
-          direction: Math.random() >= UPVOTE_RATIO_FOR_POST ? 1 : -1,
+          direction: Math.random() <= UPVOTE_RATIO_FOR_POST ? 1 : -1,
         },
       });
     });
@@ -119,6 +122,8 @@ const adminSeed = async () => {
     await Promise.all(userCommentVotePerCommentPromises);
   });
   await Promise.all(userCommentVotePromises);
+
+  await prisma.$executeRaw("call updatescore();");
 
   return prisma.post.findMany();
 };
