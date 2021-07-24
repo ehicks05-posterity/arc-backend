@@ -4,8 +4,8 @@ CREATE TABLE "User" (
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "role" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ NOT NULL,
 
     PRIMARY KEY ("id")
 );
@@ -17,8 +17,8 @@ CREATE TABLE "Post" (
     "content" TEXT NOT NULL,
     "link" TEXT NOT NULL,
     "deleted" BOOLEAN NOT NULL DEFAULT false,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ NOT NULL,
     "authorId" TEXT NOT NULL,
     "score" DOUBLE PRECISION NOT NULL DEFAULT 0,
 
@@ -31,8 +31,8 @@ CREATE TABLE "Comment" (
     "content" TEXT NOT NULL,
     "deleted" BOOLEAN NOT NULL DEFAULT false,
     "level" INTEGER NOT NULL DEFAULT 0,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ NOT NULL,
     "postId" TEXT NOT NULL,
     "parentCommentId" TEXT,
     "authorId" TEXT,
@@ -45,7 +45,9 @@ CREATE TABLE "Comment" (
 CREATE TABLE "UserPostVote" (
     "userId" TEXT NOT NULL,
     "postId" TEXT NOT NULL,
-    "isUpvote" BOOLEAN NOT NULL,
+    "direction" INTEGER NOT NULL DEFAULT 0,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ NOT NULL,
 
     PRIMARY KEY ("userId","postId")
 );
@@ -54,7 +56,9 @@ CREATE TABLE "UserPostVote" (
 CREATE TABLE "UserCommentVote" (
     "userId" TEXT NOT NULL,
     "commentId" TEXT NOT NULL,
-    "isUpvote" BOOLEAN NOT NULL,
+    "direction" INTEGER NOT NULL DEFAULT 0,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ NOT NULL,
 
     PRIMARY KEY ("userId","commentId")
 );
@@ -82,3 +86,34 @@ ALTER TABLE "UserCommentVote" ADD FOREIGN KEY ("userId") REFERENCES "User"("id")
 
 -- AddForeignKey
 ALTER TABLE "UserCommentVote" ADD FOREIGN KEY ("commentId") REFERENCES "Comment"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- CreateFunction
+CREATE OR REPLACE FUNCTION getAgeInHours(dt timestamptz) RETURNS integer AS $$
+	BEGIN
+		RETURN (EXTRACT(EPOCH FROM (now() - dt)) / 60 / 60);
+	END;
+$$ LANGUAGE plpgsql;
+
+-- CreateFunction
+CREATE OR REPLACE FUNCTION getNetVotes(id text, createdAt timestamptz) RETURNS integer AS $$
+	DECLARE
+		netVotes integer = 0;
+	BEGIN
+		netVotes = (select sum(direction) from "UserPostVote" where "postId" = id);
+		RETURN coalesce(netVotes, 0);
+	END;
+$$ LANGUAGE plpgsql;
+
+-- CreateFunction
+CREATE OR REPLACE FUNCTION getScore(id text, createdAt timestamptz) RETURNS real AS $$
+	BEGIN
+		RETURN getNetVotes(id, createdAt) / ((getAgeInHours(createdAt) + 2) ^ 1.5);
+	END;
+$$ LANGUAGE plpgsql;
+
+-- CreateProcedure
+CREATE OR REPLACE PROCEDURE updateScore() AS $$
+	BEGIN
+		update "Post" set score=coalesce(getScore("id", "createdAt"), 0);
+	END;
+$$ LANGUAGE plpgsql;
