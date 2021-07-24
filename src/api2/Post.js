@@ -8,7 +8,7 @@ const {
   inputObjectType,
 } = require("nexus");
 const { Post } = require("nexus-prisma");
-const { adminCreatePost } = require("./utils");
+const { adminCreatePost, adminSeed, adminNuke } = require("./utils");
 
 module.exports.Post = objectType({
   name: Post.$name,
@@ -105,6 +105,20 @@ module.exports.adminCreatePost = mutationField("adminCreatePost", {
   type: "Post",
   resolve() {
     return adminCreatePost();
+  },
+});
+
+module.exports.adminSeed = mutationField("adminSeed", {
+  type: list("Post"),
+  resolve() {
+    return adminSeed();
+  },
+});
+
+module.exports.adminNuke = mutationField("adminNuke", {
+  type: "Post",
+  resolve() {
+    return adminNuke();
   },
 });
 

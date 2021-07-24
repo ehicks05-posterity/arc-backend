@@ -34,6 +34,16 @@ module.exports.getUser = queryField("getUser", {
   },
 });
 
+module.exports.getMe = queryField("getMe", {
+  type: "User",
+  resolve(_, _args, ctx) {
+    const { user } = ctx;
+    return ctx.prisma.user.findUnique({
+      where: { id: user?.sub },
+    });
+  },
+});
+
 module.exports.createUser = mutationField("createUser", {
   type: "User",
   resolve(_, _args, ctx) {
