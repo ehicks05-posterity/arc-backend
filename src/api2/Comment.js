@@ -17,10 +17,12 @@ module.exports.Comment = objectType({
     t.field(Comment.deleted);
     t.field(Comment.level);
     t.field(Comment.author);
+    t.string("authorId");
     t.field(Comment.post);
+    t.nonNull.string("postId");
     t.field(Comment.parentComment);
+    t.string("parentCommentId");
     t.field(Comment.comments);
-    // t.field(Comment.votes);
     t.field(Comment.score);
     t.field(Comment.createdAt);
     t.field(Comment.updatedAt);

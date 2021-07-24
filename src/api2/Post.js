@@ -19,6 +19,7 @@ module.exports.Post = objectType({
     t.field(Post.link);
     t.field(Post.content);
     t.field(Post.author);
+    t.string("authorId");
     t.field(Post.comments);
     t.int("commentCount", {
       resolve(root, _args, ctx) {
