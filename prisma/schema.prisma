@@ -77,8 +77,8 @@ model UserCommentVote {
   userId    String
   commentId String
 
-  user User    @relation(fields: [userId], references: [id])
-  post Comment @relation(fields: [commentId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id])
 
   direction Int      @default(0)
   createdAt DateTime @default(now()) @db.Timestamptz
