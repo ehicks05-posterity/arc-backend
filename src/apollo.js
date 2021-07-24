@@ -1,18 +1,24 @@
-const { ApolloServer } = require("apollo-server");
+const { ApolloServer } = require("apollo-server-express");
+const { ApolloServerPluginInlineTrace } = require("apollo-server-core");
 const { schema } = require("./schema");
 
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const server = new ApolloServer({
-  schema,
-  context: () => {
-    return {
-      prisma,
-    };
-  },
-});
+const createApolloServer = () => {
+  const server = new ApolloServer({
+    schema,
+    context: ({ req }) => {
+      return {
+        prisma,
+        req,
+        user: req.user,
+      };
+    },
+    plugins: [ApolloServerPluginInlineTrace()],
+  });
 
-server.listen().then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
-});
+  return server;
+};
+
+module.exports.createApolloServer = createApolloServer;

@@ -5,6 +5,7 @@ require("./apollo");
 const jwt = require("express-jwt");
 // const jwtAuthz = require("express-jwt-authz");
 const jwksRsa = require("jwks-rsa");
+const { createApolloServer } = require("./apollo");
 
 const app = express();
 
@@ -27,6 +28,8 @@ const checkJwt = jwt({
   audience: "ehicks.net",
   issuer: [`https://hicks.us.auth0.com/`],
   algorithms: ["RS256"],
+
+  credentialsRequired: false,
 });
 // END AUTH
 
@@ -50,6 +53,16 @@ app.get("/me", checkJwt, (req, res) => {
   });
 });
 
-app.listen(process.env.PORT, () => {
-  console.log(`Example app listening at http://localhost:${process.env.PORT}`);
-});
+app.use("/graphql", checkJwt);
+
+async function startApolloServer() {
+  const apolloServer = createApolloServer();
+  await apolloServer.start();
+  apolloServer.applyMiddleware({ app });
+  await new Promise((resolve) => app.listen({ port: 4000 }, resolve));
+  console.log(
+    `🚀 Server ready at http://localhost:4000${apolloServer.graphqlPath}`
+  );
+}
+
+startApolloServer();
