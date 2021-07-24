@@ -6,6 +6,7 @@ const jwt = require("express-jwt");
 // const jwtAuthz = require("express-jwt-authz");
 const jwksRsa = require("jwks-rsa");
 const { createApolloServer } = require("./apollo");
+const { scheduleUpdateScoresProcedure } = require("./tasks");
 
 const app = express();
 
@@ -63,6 +64,8 @@ async function startApolloServer() {
   console.log(
     `🚀 Server ready at http://localhost:4000${apolloServer.graphqlPath}`
   );
+
+  scheduleUpdateScoresProcedure();
 }
 
 startApolloServer();
