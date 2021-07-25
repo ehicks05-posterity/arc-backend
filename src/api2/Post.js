@@ -89,8 +89,8 @@ module.exports.createPost = mutationField("createPost", {
   type: "Post",
   args: { input: this.createPostInput },
   resolve(_, args, ctx) {
-    const { title, link, content } = args;
-    const authorId = "";
+    let authorId = ctx.user.sub;
+    const { title, link, content } = args.input;
     const data = {
       author: { connect: { id: authorId } },
       title,
