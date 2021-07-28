@@ -90,7 +90,7 @@ module.exports.createPost = mutationField("createPost", {
   args: { input: this.createPostInput },
   resolve(_, args, ctx) {
     const authorId = ctx.user.sub;
-    if (!authorId) throw new Error('Author is required');
+    if (!authorId) throw new Error("Author is required");
 
     const { title, link, content } = args.input;
     const data = {
