@@ -85,6 +85,20 @@ export interface NexusGenObjects {
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     username: string; // String!
   }
+  UserCommentVote: { // root type
+    commentId: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    direction: number; // Int!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    userId: string; // String!
+  }
+  UserPostVote: { // root type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    direction: number; // Int!
+    postId: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    userId: string; // String!
+  }
 }
 
 export interface NexusGenInterfaces {
@@ -149,12 +163,32 @@ export interface NexusGenFieldTypes {
     getUsers: Array<NexusGenRootTypes['User'] | null> | null; // [User]
   }
   User: { // field return type
+    commentVotes: NexusGenRootTypes['UserCommentVote'][]; // [UserCommentVote!]!
     comments: NexusGenRootTypes['Comment'][]; // [Comment!]!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: string; // ID!
+    postVotes: NexusGenRootTypes['UserPostVote'][]; // [UserPostVote!]!
     posts: NexusGenRootTypes['Post'][]; // [Post!]!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     username: string; // String!
+  }
+  UserCommentVote: { // field return type
+    comment: NexusGenRootTypes['Comment']; // Comment!
+    commentId: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    direction: number; // Int!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    user: NexusGenRootTypes['User']; // User!
+    userId: string; // String!
+  }
+  UserPostVote: { // field return type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    direction: number; // Int!
+    post: NexusGenRootTypes['Post']; // Post!
+    postId: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    user: NexusGenRootTypes['User']; // User!
+    userId: string; // String!
   }
 }
 
@@ -210,12 +244,32 @@ export interface NexusGenFieldTypeNames {
     getUsers: 'User'
   }
   User: { // field return type name
+    commentVotes: 'UserCommentVote'
     comments: 'Comment'
     createdAt: 'DateTime'
     id: 'ID'
+    postVotes: 'UserPostVote'
     posts: 'Post'
     updatedAt: 'DateTime'
     username: 'String'
+  }
+  UserCommentVote: { // field return type name
+    comment: 'Comment'
+    commentId: 'String'
+    createdAt: 'DateTime'
+    direction: 'Int'
+    updatedAt: 'DateTime'
+    user: 'User'
+    userId: 'String'
+  }
+  UserPostVote: { // field return type name
+    createdAt: 'DateTime'
+    direction: 'Int'
+    post: 'Post'
+    postId: 'String'
+    updatedAt: 'DateTime'
+    user: 'User'
+    userId: 'String'
   }
 }
 

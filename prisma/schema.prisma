@@ -16,8 +16,6 @@ datasource db {
 model User {
   id           String            @id @default(uuid())
   username     String
-  password     String
-  role         String
   createdAt    DateTime          @default(now()) @db.Timestamptz
   updatedAt    DateTime          @updatedAt @db.Timestamptz
   posts        Post[]

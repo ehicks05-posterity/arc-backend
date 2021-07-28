@@ -69,12 +69,34 @@ enum Sort {
 
 """A User..."""
 type User {
+  commentVotes: [UserCommentVote!]!
   comments: [Comment!]!
   createdAt: DateTime!
   id: ID!
+  postVotes: [UserPostVote!]!
   posts: [Post!]!
   updatedAt: DateTime!
   username: String!
+}
+
+type UserCommentVote {
+  comment: Comment!
+  commentId: String!
+  createdAt: DateTime!
+  direction: Int!
+  updatedAt: DateTime!
+  user: User!
+  userId: String!
+}
+
+type UserPostVote {
+  createdAt: DateTime!
+  direction: Int!
+  post: Post!
+  postId: String!
+  updatedAt: DateTime!
+  user: User!
+  userId: String!
 }
 
 input createCommentInput {

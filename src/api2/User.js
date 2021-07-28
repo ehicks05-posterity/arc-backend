@@ -1,5 +1,5 @@
 const { objectType, queryField, mutationField, idArg, list } = require("nexus");
-const { User } = require("nexus-prisma");
+const { User, UserPostVote, UserCommentVote } = require("nexus-prisma");
 const { getFakeUser } = require("./utils");
 
 module.exports.User = objectType({
@@ -12,6 +12,36 @@ module.exports.User = objectType({
     t.field(User.updatedAt);
     t.field(User.posts);
     t.field(User.comments);
+    t.field(User.postVotes);
+    t.field(User.commentVotes);
+  },
+});
+
+module.exports.UserPostVote = objectType({
+  name: UserPostVote.$name,
+  description: UserPostVote.$description,
+  definition(t) {
+    t.field(UserPostVote.userId);
+    t.field(UserPostVote.user);
+    t.field(UserPostVote.postId);
+    t.field(UserPostVote.post);
+    t.field(UserPostVote.direction);
+    t.field(UserPostVote.createdAt);
+    t.field(UserPostVote.updatedAt);
+  },
+});
+
+module.exports.UserCommentVote = objectType({
+  name: UserCommentVote.$name,
+  description: UserCommentVote.$description,
+  definition(t) {
+    t.field(UserCommentVote.userId);
+    t.field(UserCommentVote.user);
+    t.field(UserCommentVote.commentId);
+    t.field(UserCommentVote.comment);
+    t.field(UserCommentVote.direction);
+    t.field(UserCommentVote.createdAt);
+    t.field(UserCommentVote.updatedAt);
   },
 });
 
