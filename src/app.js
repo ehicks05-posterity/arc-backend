@@ -8,6 +8,9 @@ const jwksRsa = require("jwks-rsa");
 const { createApolloServer } = require("./apollo");
 const { scheduleUpdateScoresProcedure } = require("./tasks");
 
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
 const app = express();
 
 // AUTH
@@ -52,6 +55,19 @@ app.get("/me", checkJwt, (req, res) => {
   res.json({
     message: "Hello! This is an authenticated route.",
   });
+});
+
+app.use(checkJwt, async (req, res, next) => {
+  if (req.user) {
+    console.log(req.user);
+    const id = req.user.sub;
+    const user = await prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      console.log(`incoming user ${id} is missing from db. creating...`);
+      await prisma.user.create({ data: { id, username: id } });
+    }
+  }
+  next();
 });
 
 app.use("/graphql", checkJwt);
