@@ -58,8 +58,12 @@ module.exports.createComment = mutationField("createComment", {
   type: "Comment",
   args: { input: this.createCommentInput },
   resolve(_, args, ctx) {
-    const { postId, parentCommentId, level, content } = args;
+    const authorId = ctx.user.sub;
+    if (!authorId) throw new Error('Author is required');
+
+    const { postId, parentCommentId, level, content } = args.input;
     const data = {
+      author: { connect: { id: authorId } },
       post: { connect: { id: postId } },
       parentComment: parentCommentId
         ? { connect: { id: parentCommentId } }

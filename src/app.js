@@ -59,7 +59,7 @@ app.get("/me", checkJwt, (req, res) => {
 
 app.use(checkJwt, async (req, res, next) => {
   if (req.user) {
-    console.log(req.user);
+    console.log(req.user.sub);
     const id = req.user.sub;
     const user = await prisma.user.findUnique({ where: { id } });
     if (!user) {
