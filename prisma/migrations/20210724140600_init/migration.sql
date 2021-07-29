@@ -105,6 +105,16 @@ CREATE OR REPLACE FUNCTION getNetVotes(id text, createdAt timestamptz) RETURNS i
 $$ LANGUAGE plpgsql;
 
 -- CreateFunction
+CREATE OR REPLACE FUNCTION getCommentNetVotes(id text, createdAt timestamptz) RETURNS integer AS $$
+	DECLARE
+		netVotes integer = 0;
+	BEGIN
+		netVotes = (select sum(direction) from "UserCommentVote" where "commentId" = id);
+		RETURN coalesce(netVotes, 0);
+	END;
+$$ LANGUAGE plpgsql;
+
+-- CreateFunction
 CREATE OR REPLACE FUNCTION getScore(id text, createdAt timestamptz) RETURNS real AS $$
 	BEGIN
 		RETURN getNetVotes(id, createdAt) / ((getAgeInHours(createdAt) + 2) ^ 1.5);
