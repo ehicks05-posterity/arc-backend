@@ -11,12 +11,14 @@ type Comment {
   deleted: Boolean!
   id: ID!
   level: Int!
+  netVotes: Int!
   parentComment: Comment
   parentCommentId: String
   post: Post!
   postId: String!
   score: Float!
   updatedAt: DateTime!
+  userVote: UserCommentVote
 }
 
 """

@@ -126,12 +126,14 @@ export interface NexusGenFieldTypes {
     deleted: boolean; // Boolean!
     id: string; // ID!
     level: number; // Int!
+    netVotes: number; // Int!
     parentComment: NexusGenRootTypes['Comment'] | null; // Comment
     parentCommentId: string | null; // String
     post: NexusGenRootTypes['Post']; // Post!
     postId: string; // String!
     score: number; // Float!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    userVote: NexusGenRootTypes['UserCommentVote'] | null; // UserCommentVote
   }
   Mutation: { // field return type
     adminCreatePost: NexusGenRootTypes['Post'] | null; // Post
@@ -210,12 +212,14 @@ export interface NexusGenFieldTypeNames {
     deleted: 'Boolean'
     id: 'ID'
     level: 'Int'
+    netVotes: 'Int'
     parentComment: 'Comment'
     parentCommentId: 'String'
     post: 'Post'
     postId: 'String'
     score: 'Float'
     updatedAt: 'DateTime'
+    userVote: 'UserCommentVote'
   }
   Mutation: { // field return type name
     adminCreatePost: 'Post'

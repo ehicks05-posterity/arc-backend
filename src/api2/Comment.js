@@ -26,6 +26,29 @@ module.exports.Comment = objectType({
     t.field(Comment.score);
     t.field(Comment.createdAt);
     t.field(Comment.updatedAt);
+    t.nonNull.int("netVotes", {
+      async resolve(root, _args, ctx) {
+        const result = await ctx.prisma
+          .$queryRaw`select getCommentNetVotes(id, "createdAt") as "netVotes" from "Comment" where id = ${root.id};`;
+        return result[0].netVotes;
+      },
+    });
+    t.field("userVote", {
+      type: "UserCommentVote",
+      resolve(root, args, ctx) {
+        const userId = ctx.user.sub;
+        if (!userId) return null;
+
+        return ctx.prisma.userCommentVote.findUnique({
+          where: {
+            userId_commentId: {
+              userId,
+              commentId: root.id,
+            },
+          },
+        });
+      },
+    });
   },
 });
 
@@ -59,7 +82,7 @@ module.exports.createComment = mutationField("createComment", {
   args: { input: this.createCommentInput },
   resolve(_, args, ctx) {
     const authorId = ctx.user.sub;
-    if (!authorId) throw new Error('Author is required');
+    if (!authorId) throw new Error("Author is required");
 
     const { postId, parentCommentId, level, content } = args.input;
     const data = {
