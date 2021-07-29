@@ -73,7 +73,7 @@ module.exports.createUserPostVote = mutationField("createUserPostVote", {
   type: "UserPostVote",
   args: { input: this.createUserPostVoteInput },
   resolve(_, args, ctx) {
-    const userId = ctx.user.sub;
+    const userId = ctx.user?.sub;
     if (!userId) throw new Error("userId is required");
 
     const { postId, direction: directionArg } = args.input;
@@ -95,7 +95,7 @@ module.exports.deleteUserPostVote = mutationField("deleteUserPostVote", {
   type: "UserPostVote",
   args: { postId: idArg() },
   async resolve(_, args, ctx) {
-    const userId = ctx.user.sub;
+    const userId = ctx.user?.sub;
     if (!userId) throw new Error("userId is required");
 
     const query = {
@@ -119,7 +119,7 @@ module.exports.createUserCommentVote = mutationField("createUserCommentVote", {
   type: "UserCommentVote",
   args: { input: this.createUserCommentVoteInput },
   resolve(_, args, ctx) {
-    const userId = ctx.user.sub;
+    const userId = ctx.user?.sub;
     if (!userId) throw new Error("userId is required");
 
     const { commentId, direction: directionArg } = args.input;
@@ -141,7 +141,7 @@ module.exports.deleteUserCommentVote = mutationField("deleteUserCommentVote", {
   type: "UserCommentVote",
   args: { commentId: idArg() },
   async resolve(_, args, ctx) {
-    const userId = ctx.user.sub;
+    const userId = ctx.user?.sub;
     if (!userId) throw new Error("userId is required");
 
     const query = {

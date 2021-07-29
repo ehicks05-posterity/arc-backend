@@ -36,7 +36,7 @@ module.exports.Comment = objectType({
     t.field("userVote", {
       type: "UserCommentVote",
       resolve(root, args, ctx) {
-        const userId = ctx.user.sub;
+        const userId = ctx.user?.sub;
         if (!userId) return null;
 
         return ctx.prisma.userCommentVote.findUnique({
@@ -81,7 +81,7 @@ module.exports.createComment = mutationField("createComment", {
   type: "Comment",
   args: { input: this.createCommentInput },
   resolve(_, args, ctx) {
-    const authorId = ctx.user.sub;
+    const authorId = ctx.user?.sub;
     if (!authorId) throw new Error("Author is required");
 
     const { postId, parentCommentId, level, content } = args.input;
