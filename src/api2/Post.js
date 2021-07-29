@@ -38,6 +38,22 @@ module.exports.Post = objectType({
       },
     });
     t.field(Post.score);
+    t.field("userVote", {
+      type: "UserPostVote",
+      resolve(root, args, ctx) {
+        const userId = ctx.user.sub;
+        if (!userId) return null;
+
+        return ctx.prisma.userPostVote.findUnique({
+          where: {
+            userId_postId: {
+              userId,
+              postId: root.id,
+            },
+          },
+        });
+      },
+    });
   },
 });
 
