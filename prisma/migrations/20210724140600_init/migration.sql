@@ -121,9 +121,17 @@ CREATE OR REPLACE FUNCTION getScore(id text, createdAt timestamptz) RETURNS real
 	END;
 $$ LANGUAGE plpgsql;
 
+-- CreateFunction
+CREATE OR REPLACE FUNCTION getCommentScore(id text, createdAt timestamptz) RETURNS real AS $$
+	BEGIN
+		RETURN getCommentNetVotes(id, createdAt) / ((getAgeInHours(createdAt) + 2) ^ 1.5);
+	END;
+$$ LANGUAGE plpgsql;
+
 -- CreateProcedure
 CREATE OR REPLACE PROCEDURE updateScore() AS $$
 	BEGIN
 		update "Post" set score=coalesce(getScore("id", "createdAt"), 0);
+		update "Comment" set score=coalesce(getCommentScore("id", "createdAt"), 0);
 	END;
 $$ LANGUAGE plpgsql;
