@@ -1,4 +1,12 @@
-const { objectType, queryField, mutationField, idArg, list } = require("nexus");
+const {
+  objectType,
+  queryField,
+  mutationField,
+  idArg,
+  list,
+  inputObjectType,
+  enumType,
+} = require("nexus");
 const { User, UserPostVote, UserCommentVote } = require("nexus-prisma");
 const { getFakeUser } = require("./utils");
 
@@ -42,6 +50,60 @@ module.exports.UserCommentVote = objectType({
     t.field(UserCommentVote.direction);
     t.field(UserCommentVote.createdAt);
     t.field(UserCommentVote.updatedAt);
+  },
+});
+
+const DIRECTIONS = ["UP", "DOWN"];
+const DIRECTION_TO_VALUE = { UP: 1, DOWN: -1 };
+
+module.exports.Direction = enumType({
+  name: "Direction",
+  members: DIRECTIONS,
+});
+
+module.exports.createUserPostVoteInput = inputObjectType({
+  name: "createUserPostVoteInput",
+  definition(t) {
+    t.string("postId");
+    t.nonNull.field("direction", { type: "Direction" });
+  },
+});
+
+module.exports.createUserPostVote = mutationField("createUserPostVote", {
+  type: "UserPostVote",
+  args: { input: this.createUserPostVoteInput },
+  resolve(_, args, ctx) {
+    const userId = ctx.user.sub;
+    if (!userId) throw new Error("userId is required");
+
+    const { postId, direction: directionArg } = args.input;
+    const direction = DIRECTION_TO_VALUE[directionArg];
+
+    return ctx.prisma.userPostVote.upsert({
+      where: { userId_postId: { userId, postId } },
+      update: { direction },
+      create: {
+        user: { connect: { id: userId } },
+        post: { connect: { id: postId } },
+        direction,
+      },
+    });
+  },
+});
+
+module.exports.deleteUserPostVote = mutationField("deleteUserPostVote", {
+  type: "UserPostVote",
+  args: { postId: idArg() },
+  async resolve(_, args, ctx) {
+    const userId = ctx.user.sub;
+    if (!userId) throw new Error("userId is required");
+
+    const query = {
+      where: { userId_postId: { userId, postId: args.postId } },
+    };
+
+    const userPostVote = await ctx.prisma.userPostVote.findUnique(query);
+    if (userPostVote) return ctx.prisma.userPostVote.delete(query);
   },
 });
 

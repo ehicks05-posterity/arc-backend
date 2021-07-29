@@ -39,9 +39,14 @@ export interface NexusGenInputs {
     link?: string | null; // String
     title: string; // String!
   }
+  createUserPostVoteInput: { // input type
+    direction: NexusGenEnums['Direction']; // Direction!
+    postId?: string | null; // String
+  }
 }
 
 export interface NexusGenEnums {
+  Direction: "DOWN" | "UP"
   Sort: "HOT" | "NEW" | "TOP"
 }
 
@@ -135,9 +140,11 @@ export interface NexusGenFieldTypes {
     createComment: NexusGenRootTypes['Comment'] | null; // Comment
     createPost: NexusGenRootTypes['Post'] | null; // Post
     createUser: NexusGenRootTypes['User'] | null; // User
+    createUserPostVote: NexusGenRootTypes['UserPostVote'] | null; // UserPostVote
     deleteComment: NexusGenRootTypes['Comment'] | null; // Comment
     deletePost: NexusGenRootTypes['Post'] | null; // Post
     deleteUser: NexusGenRootTypes['User'] | null; // User
+    deleteUserPostVote: NexusGenRootTypes['UserPostVote'] | null; // UserPostVote
   }
   Post: { // field return type
     author: NexusGenRootTypes['User']; // User!
@@ -152,6 +159,7 @@ export interface NexusGenFieldTypes {
     score: number; // Float!
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    userVote: NexusGenRootTypes['UserPostVote'] | null; // UserPostVote
   }
   Query: { // field return type
     getCommentById: NexusGenRootTypes['Comment'] | null; // Comment
@@ -216,9 +224,11 @@ export interface NexusGenFieldTypeNames {
     createComment: 'Comment'
     createPost: 'Post'
     createUser: 'User'
+    createUserPostVote: 'UserPostVote'
     deleteComment: 'Comment'
     deletePost: 'Post'
     deleteUser: 'User'
+    deleteUserPostVote: 'UserPostVote'
   }
   Post: { // field return type name
     author: 'User'
@@ -233,6 +243,7 @@ export interface NexusGenFieldTypeNames {
     score: 'Float'
     title: 'String'
     updatedAt: 'DateTime'
+    userVote: 'UserPostVote'
   }
   Query: { // field return type name
     getCommentById: 'Comment'
@@ -281,6 +292,9 @@ export interface NexusGenArgTypes {
     createPost: { // args
       input?: NexusGenInputs['createPostInput'] | null; // createPostInput
     }
+    createUserPostVote: { // args
+      input?: NexusGenInputs['createUserPostVoteInput'] | null; // createUserPostVoteInput
+    }
     deleteComment: { // args
       id?: string | null; // ID
     }
@@ -289,6 +303,9 @@ export interface NexusGenArgTypes {
     }
     deleteUser: { // args
       id?: string | null; // ID
+    }
+    deleteUserPostVote: { // args
+      postId?: string | null; // ID
     }
   }
   Query: {
