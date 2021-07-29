@@ -38,10 +38,12 @@ type Mutation {
   createComment(input: createCommentInput): Comment
   createPost(input: createPostInput): Post
   createUser: User
+  createUserCommentVote(input: createUserCommentVoteInput): UserCommentVote
   createUserPostVote(input: createUserPostVoteInput): UserPostVote
   deleteComment(id: ID): Comment
   deletePost(id: ID): Post
   deleteUser(id: ID): User
+  deleteUserCommentVote(commentId: ID): UserCommentVote
   deleteUserPostVote(postId: ID): UserPostVote
 }
 
@@ -120,6 +122,11 @@ input createPostInput {
   content: String
   link: String
   title: String!
+}
+
+input createUserCommentVoteInput {
+  commentId: String
+  direction: Direction!
 }
 
 input createUserPostVoteInput {
