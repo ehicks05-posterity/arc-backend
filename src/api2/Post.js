@@ -140,6 +140,34 @@ module.exports.adminNuke = mutationField("adminNuke", {
   },
 });
 
+module.exports.updatePostInput = inputObjectType({
+  name: "updatePostInput",
+  definition(t) {
+    t.nonNull.id("id");
+    t.nonNull.string("content");
+  },
+});
+
+module.exports.updatePost = mutationField("updatePost", {
+  type: "Post",
+  args: { input: this.updatePostInput },
+  async resolve(_, args, ctx) {
+    const userId = ctx.user?.sub;
+    if (!userId) throw new Error("userId is required");
+
+    const { id, content } = args.input;
+
+    const post = await ctx.prisma.post.findUnique({ where: { id } });
+    if (post.authorId !== userId)
+      throw new Error("you can only update your own posts");
+
+    return ctx.prisma.post.update({
+      where: { id },
+      data: { content },
+    });
+  },
+});
+
 module.exports.deletePost = mutationField("deletePost", {
   type: "Post",
   args: { id: idArg() },

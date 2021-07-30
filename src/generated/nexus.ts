@@ -51,6 +51,10 @@ export interface NexusGenInputs {
     content: string; // String!
     id: string; // ID!
   }
+  updatePostInput: { // input type
+    content: string; // String!
+    id: string; // ID!
+  }
 }
 
 export interface NexusGenEnums {
@@ -158,6 +162,7 @@ export interface NexusGenFieldTypes {
     deleteUserCommentVote: NexusGenRootTypes['UserCommentVote'] | null; // UserCommentVote
     deleteUserPostVote: NexusGenRootTypes['UserPostVote'] | null; // UserPostVote
     updateComment: NexusGenRootTypes['Comment'] | null; // Comment
+    updatePost: NexusGenRootTypes['Post'] | null; // Post
   }
   Post: { // field return type
     author: NexusGenRootTypes['User']; // User!
@@ -247,6 +252,7 @@ export interface NexusGenFieldTypeNames {
     deleteUserCommentVote: 'UserCommentVote'
     deleteUserPostVote: 'UserPostVote'
     updateComment: 'Comment'
+    updatePost: 'Post'
   }
   Post: { // field return type name
     author: 'User'
@@ -333,6 +339,9 @@ export interface NexusGenArgTypes {
     }
     updateComment: { // args
       input?: NexusGenInputs['updateCommentInput'] | null; // updateCommentInput
+    }
+    updatePost: { // args
+      input?: NexusGenInputs['updatePostInput'] | null; // updatePostInput
     }
   }
   Query: {
