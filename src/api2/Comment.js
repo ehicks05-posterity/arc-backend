@@ -98,6 +98,34 @@ module.exports.createComment = mutationField("createComment", {
   },
 });
 
+module.exports.updateCommentInput = inputObjectType({
+  name: "updateCommentInput",
+  definition(t) {
+    t.nonNull.id("id");
+    t.nonNull.string("content");
+  },
+});
+
+module.exports.updateComment = mutationField("updateComment", {
+  type: "Comment",
+  args: { input: this.updateCommentInput },
+  async resolve(_, args, ctx) {
+    const userId = ctx.user?.sub;
+    if (!userId) throw new Error("userId is required");
+
+    const { id, content } = args.input;
+
+    const comment = await ctx.prisma.comment.findUnique({ where: { id } });
+    if (comment.authorId !== userId)
+      throw new Error("you can only update your own comments");
+
+    return ctx.prisma.comment.update({
+      where: { id },
+      data: { content },
+    });
+  },
+});
+
 module.exports.deleteComment = mutationField("deleteComment", {
   type: "Comment",
   args: { id: idArg() },
