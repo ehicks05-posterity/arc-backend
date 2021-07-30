@@ -101,9 +101,18 @@ module.exports.createComment = mutationField("createComment", {
 module.exports.deleteComment = mutationField("deleteComment", {
   type: "Comment",
   args: { id: idArg() },
-  resolve(_, args, ctx) {
+  async resolve(_, args, ctx) {
+    const userId = ctx.user?.sub;
+    if (!userId) throw new Error("userId is required");
+
+    const { id } = args;
+
+    const comment = await ctx.prisma.comment.findUnique({ where: { id } });
+    if (comment.authorId !== userId)
+      throw new Error("you can only delete your own comments");
+
     return ctx.prisma.comment.update({
-      where: { id: args.id },
+      where: { id },
       data: {
         deleted: true,
         content: "Deleted",
