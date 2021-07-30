@@ -89,6 +89,7 @@ export interface NexusGenObjects {
     authorId?: string | null; // String
     content: string; // String!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
+    deleted: boolean; // Boolean!
     id: string; // ID!
     link: string; // String!
     score: number; // Float!
@@ -165,12 +166,13 @@ export interface NexusGenFieldTypes {
     updatePost: NexusGenRootTypes['Post'] | null; // Post
   }
   Post: { // field return type
-    author: NexusGenRootTypes['User']; // User!
+    author: NexusGenRootTypes['User'] | null; // User
     authorId: string | null; // String
     commentCount: number | null; // Int
     comments: NexusGenRootTypes['Comment'][]; // [Comment!]!
     content: string; // String!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
+    deleted: boolean; // Boolean!
     id: string; // ID!
     link: string; // String!
     netVotes: number; // Int!
@@ -261,6 +263,7 @@ export interface NexusGenFieldTypeNames {
     comments: 'Comment'
     content: 'String'
     createdAt: 'DateTime'
+    deleted: 'Boolean'
     id: 'ID'
     link: 'String'
     netVotes: 'Int'

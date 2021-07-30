@@ -18,6 +18,7 @@ module.exports.Post = objectType({
     t.field(Post.title);
     t.field(Post.link);
     t.field(Post.content);
+    t.field(Post.deleted);
     t.field(Post.author);
     t.string("authorId");
     t.field(Post.comments);
@@ -185,6 +186,8 @@ module.exports.deletePost = mutationField("deletePost", {
       where: { id },
       data: {
         deleted: true,
+        content: "Deleted",
+        author: { disconnect: true },
       },
     });
   },

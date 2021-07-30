@@ -50,12 +50,13 @@ type Mutation {
 }
 
 type Post {
-  author: User!
+  author: User
   authorId: String
   commentCount: Int
   comments: [Comment!]!
   content: String!
   createdAt: DateTime!
+  deleted: Boolean!
   id: ID!
   link: String!
   netVotes: Int!

@@ -32,8 +32,8 @@ model Post {
   deleted   Boolean        @default(false)
   createdAt DateTime       @default(now()) @db.Timestamptz
   updatedAt DateTime       @updatedAt @db.Timestamptz
-  author    User           @relation(fields: [authorId], references: [id])
-  authorId  String
+  author    User?          @relation(fields: [authorId], references: [id])
+  authorId  String?
   comments  Comment[]
   votes     UserPostVote[]
   score     Float          @default(0)
