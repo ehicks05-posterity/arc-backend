@@ -155,13 +155,13 @@ export interface NexusGenFieldTypes {
     createComment: NexusGenRootTypes['Comment'] | null; // Comment
     createPost: NexusGenRootTypes['Post'] | null; // Post
     createUser: NexusGenRootTypes['User'] | null; // User
-    createUserCommentVote: NexusGenRootTypes['UserCommentVote'] | null; // UserCommentVote
-    createUserPostVote: NexusGenRootTypes['UserPostVote'] | null; // UserPostVote
+    createUserCommentVote: NexusGenRootTypes['Comment'] | null; // Comment
+    createUserPostVote: NexusGenRootTypes['Post'] | null; // Post
     deleteComment: NexusGenRootTypes['Comment'] | null; // Comment
     deletePost: NexusGenRootTypes['Post'] | null; // Post
     deleteUser: NexusGenRootTypes['User'] | null; // User
-    deleteUserCommentVote: NexusGenRootTypes['UserCommentVote'] | null; // UserCommentVote
-    deleteUserPostVote: NexusGenRootTypes['UserPostVote'] | null; // UserPostVote
+    deleteUserCommentVote: NexusGenRootTypes['Comment'] | null; // Comment
+    deleteUserPostVote: NexusGenRootTypes['Post'] | null; // Post
     updateComment: NexusGenRootTypes['Comment'] | null; // Comment
     updatePost: NexusGenRootTypes['Post'] | null; // Post
   }
@@ -246,13 +246,13 @@ export interface NexusGenFieldTypeNames {
     createComment: 'Comment'
     createPost: 'Post'
     createUser: 'User'
-    createUserCommentVote: 'UserCommentVote'
-    createUserPostVote: 'UserPostVote'
+    createUserCommentVote: 'Comment'
+    createUserPostVote: 'Post'
     deleteComment: 'Comment'
     deletePost: 'Post'
     deleteUser: 'User'
-    deleteUserCommentVote: 'UserCommentVote'
-    deleteUserPostVote: 'UserPostVote'
+    deleteUserCommentVote: 'Comment'
+    deleteUserPostVote: 'Post'
     updateComment: 'Comment'
     updatePost: 'Post'
   }

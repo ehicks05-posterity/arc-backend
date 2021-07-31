@@ -38,13 +38,13 @@ type Mutation {
   createComment(input: createCommentInput): Comment
   createPost(input: createPostInput): Post
   createUser: User
-  createUserCommentVote(input: createUserCommentVoteInput): UserCommentVote
-  createUserPostVote(input: createUserPostVoteInput): UserPostVote
+  createUserCommentVote(input: createUserCommentVoteInput): Comment
+  createUserPostVote(input: createUserPostVoteInput): Post
   deleteComment(id: ID): Comment
   deletePost(id: ID): Post
   deleteUser(id: ID): User
-  deleteUserCommentVote(commentId: ID): UserCommentVote
-  deleteUserPostVote(postId: ID): UserPostVote
+  deleteUserCommentVote(commentId: ID): Comment
+  deleteUserPostVote(postId: ID): Post
   updateComment(input: updateCommentInput): Comment
   updatePost(input: updatePostInput): Post
 }

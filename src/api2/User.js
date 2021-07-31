@@ -70,16 +70,16 @@ module.exports.createUserPostVoteInput = inputObjectType({
 });
 
 module.exports.createUserPostVote = mutationField("createUserPostVote", {
-  type: "UserPostVote",
+  type: "Post",
   args: { input: this.createUserPostVoteInput },
-  resolve(_, args, ctx) {
+  async resolve(_, args, ctx) {
     const userId = ctx.user?.sub;
     if (!userId) throw new Error("userId is required");
 
     const { postId, direction: directionArg } = args.input;
     const direction = DIRECTION_TO_VALUE[directionArg];
 
-    return ctx.prisma.userPostVote.upsert({
+    await ctx.prisma.userPostVote.upsert({
       where: { userId_postId: { userId, postId } },
       update: { direction },
       create: {
@@ -88,22 +88,29 @@ module.exports.createUserPostVote = mutationField("createUserPostVote", {
         direction,
       },
     });
+
+    return ctx.prisma.post.findUnique({ where: { id: postId } });
   },
 });
 
 module.exports.deleteUserPostVote = mutationField("deleteUserPostVote", {
-  type: "UserPostVote",
+  type: "Post",
   args: { postId: idArg() },
   async resolve(_, args, ctx) {
     const userId = ctx.user?.sub;
     if (!userId) throw new Error("userId is required");
 
+    const { postId } = args;
+
     const query = {
-      where: { userId_postId: { userId, postId: args.postId } },
+      where: { userId_postId: { userId, postId } },
     };
 
     const userPostVote = await ctx.prisma.userPostVote.findUnique(query);
-    if (userPostVote) return ctx.prisma.userPostVote.delete(query);
+    if (userPostVote) await ctx.prisma.userPostVote.delete(query);
+    // error if no vote found?
+
+    return ctx.prisma.post.findUnique({ where: { id: postId } });
   },
 });
 
@@ -116,16 +123,16 @@ module.exports.createUserCommentVoteInput = inputObjectType({
 });
 
 module.exports.createUserCommentVote = mutationField("createUserCommentVote", {
-  type: "UserCommentVote",
+  type: "Comment",
   args: { input: this.createUserCommentVoteInput },
-  resolve(_, args, ctx) {
+  async resolve(_, args, ctx) {
     const userId = ctx.user?.sub;
     if (!userId) throw new Error("userId is required");
 
     const { commentId, direction: directionArg } = args.input;
     const direction = DIRECTION_TO_VALUE[directionArg];
 
-    return ctx.prisma.userCommentVote.upsert({
+    await ctx.prisma.userCommentVote.upsert({
       where: { userId_commentId: { userId, commentId } },
       update: { direction },
       create: {
@@ -134,22 +141,28 @@ module.exports.createUserCommentVote = mutationField("createUserCommentVote", {
         direction,
       },
     });
+
+    return ctx.prisma.comment.findUnique({ where: { id: commentId } });
   },
 });
 
 module.exports.deleteUserCommentVote = mutationField("deleteUserCommentVote", {
-  type: "UserCommentVote",
+  type: "Comment",
   args: { commentId: idArg() },
   async resolve(_, args, ctx) {
     const userId = ctx.user?.sub;
     if (!userId) throw new Error("userId is required");
 
+    const { commentId } = args;
     const query = {
-      where: { userId_commentId: { userId, commentId: args.commentId } },
+      where: { userId_commentId: { userId, commentId } },
     };
 
     const userCommentVote = await ctx.prisma.userCommentVote.findUnique(query);
-    if (userCommentVote) return ctx.prisma.userCommentVote.delete(query);
+    if (userCommentVote) await ctx.prisma.userCommentVote.delete(query);
+    // else throw new Error("unable to find existing vote to delete");
+
+    return ctx.prisma.comment.findUnique({ where: { id: commentId } });
   },
 });
 
