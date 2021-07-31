@@ -186,7 +186,7 @@ module.exports.deletePost = mutationField("deletePost", {
       where: { id },
       data: {
         deleted: true,
-        content: "Deleted",
+        content: "[Deleted]",
         author: { disconnect: true },
       },
     });

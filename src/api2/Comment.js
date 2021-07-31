@@ -143,7 +143,7 @@ module.exports.deleteComment = mutationField("deleteComment", {
       where: { id },
       data: {
         deleted: true,
-        content: "Deleted",
+        content: "[Deleted]",
         author: { disconnect: true },
       },
     });
