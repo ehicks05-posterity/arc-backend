@@ -2,8 +2,6 @@
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "username" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
-    "role" TEXT NOT NULL,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ NOT NULL,
 
@@ -19,7 +17,7 @@ CREATE TABLE "Post" (
     "deleted" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ NOT NULL,
-    "authorId" TEXT NOT NULL,
+    "authorId" TEXT,
     "score" DOUBLE PRECISION NOT NULL DEFAULT 0,
 
     PRIMARY KEY ("id")

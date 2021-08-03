@@ -8,8 +8,6 @@ const sample = (array) => array[Math.floor(Math.random() * array.length)];
 
 const getFakeUser = () => ({
   username: faker.internet.userName(),
-  password: faker.internet.password(),
-  role: faker.datatype.string(),
 });
 
 const getFakePost = () => ({
