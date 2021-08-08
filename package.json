@@ -26,7 +26,7 @@
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "nexus": "^1.1.0",
-    "nexus-prisma": "^0.29.1",
+    "nexus-prisma": "^0.30.0",
     "node-schedule": "^2.0.0",
     "pg": "^8.5.1"
   },
