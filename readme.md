@@ -1,12 +1,10 @@
-# hi
+# arc-backend
 
-1. todo
-
-# Prereqs
+## Prereqs
 
 1. node
 
-# Getting Started
+## Getting Started
 
 1. clone repo
 2. run: `npm run generate`
