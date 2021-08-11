@@ -3,8 +3,6 @@ const express = require("express");
 require("dotenv").config();
 require("./apollo");
 const jwt = require("express-jwt");
-// const jwtAuthz = require("express-jwt-authz");
-const jwksRsa = require("jwks-rsa");
 const { createApolloServer } = require("./apollo");
 const { scheduleUpdateScoresProcedure } = require("./tasks");
 
@@ -14,26 +12,13 @@ const prisma = new PrismaClient();
 const app = express();
 
 // AUTH
-// Authorization middleware. When used, the
-// Access Token must exist and be verified against
-// the Auth0 JSON Web Key Set
 const checkJwt = jwt({
-  // Dynamically provide a signing key
-  // based on the kid in the header and
-  // the signing keys provided by the JWKS endpoint.
-  secret: jwksRsa.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: `https://hicks.us.auth0.com/.well-known/jwks.json`,
-  }),
-
-  // Validate the audience and the issuer.
-  audience: "ehicks.net",
-  issuer: [`https://hicks.us.auth0.com/`],
-  algorithms: ["RS256"],
-
+  secret: process.env.SUPABASE_JWT_SECRET,
   credentialsRequired: false,
+  // Validate the audience and the issuer.
+  audience: "authenticated",
+  // issuer: [`https://hicks.us.auth0.com/`],
+  algorithms: ["HS256"],
 });
 // END AUTH
 
@@ -54,6 +39,7 @@ app.get("/", (req, res) => {
 app.get("/me", checkJwt, (req, res) => {
   res.json({
     message: "Hello! This is an authenticated route.",
+    user: req.user,
   });
 });
 
