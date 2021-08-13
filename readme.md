@@ -7,6 +7,9 @@
 ## Getting Started
 
 1. clone repo
-2. run: `npm i`
-3. run: `npm run generate`
-4. run: `npm run dev`
+2. run:
+   ```
+   npm i
+   npm run generate
+   npm run dev
+   ```
