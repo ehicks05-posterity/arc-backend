@@ -58,6 +58,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  CommentSort: "BEST" | "NEW" | "TOP"
   Direction: "DOWN" | "UP"
   Sort: "HOT" | "NEW" | "TOP"
 }
@@ -169,7 +170,7 @@ export interface NexusGenFieldTypes {
     author: NexusGenRootTypes['User'] | null; // User
     authorId: string | null; // String
     commentCount: number | null; // Int
-    comments: NexusGenRootTypes['Comment'][]; // [Comment!]!
+    comments: Array<NexusGenRootTypes['Comment'] | null> | null; // [Comment]
     content: string; // String!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     deleted: boolean; // Boolean!
@@ -345,6 +346,11 @@ export interface NexusGenArgTypes {
     }
     updatePost: { // args
       input?: NexusGenInputs['updatePostInput'] | null; // updatePostInput
+    }
+  }
+  Post: {
+    comments: { // args
+      commentSort?: NexusGenEnums['CommentSort'] | null; // CommentSort
     }
   }
   Query: {

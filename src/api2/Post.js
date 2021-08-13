@@ -10,6 +10,18 @@ const {
 const { Post } = require("nexus-prisma");
 const { adminCreatePost, adminSeed, adminNuke } = require("./utils");
 
+const SORTS = ["HOT", "TOP", "NEW"];
+module.exports.Sort = enumType({
+  name: "Sort",
+  members: SORTS,
+});
+
+const COMMENT_SORTS = ["BEST", "TOP", "NEW"];
+module.exports.CommentSort = enumType({
+  name: "CommentSort",
+  members: COMMENT_SORTS,
+});
+
 module.exports.Post = objectType({
   name: Post.$name,
   description: Post.$description,
@@ -22,6 +34,26 @@ module.exports.Post = objectType({
     t.field(Post.author);
     t.string("authorId");
     t.field(Post.comments);
+    t.list.field("comments", {
+      type: "Comment",
+      args: { commentSort: "CommentSort" },
+      async resolve(root, args, ctx) {
+        const { commentSort } = args;
+        const commentSortClause =
+          commentSort === "BEST"
+            ? { score: "desc" }
+            : commentSort === "TOP"
+            ? { score: "desc" }
+            : commentSort === "NEW"
+            ? { createdAt: "desc" }
+            : { score: "desc" };
+
+        return ctx.prisma.comment.findMany({
+          where: { postId: root.id },
+          orderBy: commentSortClause,
+        });
+      },
+    });
     t.int("commentCount", {
       resolve(root, _args, ctx) {
         return ctx.prisma.comment.count({
@@ -58,13 +90,6 @@ module.exports.Post = objectType({
   },
 });
 
-const SORTS = ["HOT", "TOP", "NEW"];
-
-module.exports.Sort = enumType({
-  name: "Sort",
-  members: SORTS,
-});
-
 module.exports.getPosts = queryField("getPosts", {
   type: list("Post"),
   args: { sort: "Sort" },
@@ -89,7 +114,8 @@ module.exports.getPostById = queryField("getPostById", {
   type: "Post",
   args: { id: idArg() },
   resolve(_, args, ctx) {
-    return ctx.prisma.post.findUnique({ where: { id: args.id } });
+    const { id } = args;
+    return ctx.prisma.post.findUnique({ where: { id } });
   },
 });
 
