@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate": "npx prisma generate",
-    "dev": "ts-node-dev --transpile-only --no-notify src/app.js",
+    "dev": "set NODE_ENV=development&&ts-node-dev --transpile-only --no-notify src/app.js",
     "build": "tsc",
-    "start": "node ./dist/src/app.js"
+    "start": "set NODE_ENV=production&&node ./dist/src/app.js"
   },
   "author": "",
   "license": "ISC",

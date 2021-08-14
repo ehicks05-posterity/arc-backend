@@ -58,15 +58,17 @@ app.use(checkJwt, async (req, res, next) => {
 
 app.use("/graphql", checkJwt);
 
+const port = process.env.NODE_ENV === "production" ? process.env.PORT : 4000;
+console.log(`process.env.NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`process.env.PORT: ${process.env.PORT}`);
+
 async function startApolloServer() {
   const apolloServer = createApolloServer();
   await apolloServer.start();
   apolloServer.applyMiddleware({ app });
-  await new Promise((resolve) =>
-    app.listen({ port: process.env.PORT }, resolve)
-  );
+  await new Promise((resolve) => app.listen({ port }, resolve));
   console.log(
-    `🚀 Server ready at http://localhost:4000${apolloServer.graphqlPath}`
+    `🚀 Server ready at http://localhost:${port}${apolloServer.graphqlPath}`
   );
 
   scheduleUpdateScoresProcedure();
