@@ -8,7 +8,7 @@
     "generate": "npx prisma generate",
     "dev": "ts-node-dev --transpile-only --no-notify src/app.js",
     "build": "tsc",
-    "start": "npm run node ./dist/app"
+    "start": "node ./dist/src/app.js"
   },
   "author": "",
   "license": "ISC",
