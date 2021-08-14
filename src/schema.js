@@ -1,5 +1,5 @@
 const { makeSchema } = require("nexus");
-const { types } = require("../src/api2/index");
+const { types } = require("./api/index");
 
 module.exports.schema = makeSchema({
   outputs: {
