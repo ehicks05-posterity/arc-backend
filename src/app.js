@@ -11,18 +11,15 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: ["https://arc.ehicks.net", "http://localhost:3000"] }));
 
 // AUTH
 const checkJwt = jwt({
   secret: process.env.SUPABASE_JWT_SECRET,
   credentialsRequired: false,
-  // Validate the audience and the issuer.
   audience: "authenticated",
-  // issuer: [`https://hicks.us.auth0.com/`],
   algorithms: ["HS256"],
 });
-// END AUTH
 
 app.use(morgan("dev"));
 // parse application/x-www-form-urlencoded
