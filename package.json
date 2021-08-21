@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^2.29.1",
+    "@supabase/supabase-js": "^1.22.0",
     "apollo-server-core": "^3.1.2",
     "apollo-server-express": "^3.1.2",
     "cors": "^2.8.5",
@@ -30,7 +31,8 @@
     "nexus": "^1.1.0",
     "nexus-prisma": "^0.30.0",
     "node-schedule": "^2.0.0",
-    "pg": "^8.7.1"
+    "pg": "^8.7.1",
+    "zod": "^3.7.3"
   },
   "devDependencies": {
     "@types/node": "^16.6.1",

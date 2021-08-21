@@ -43,7 +43,6 @@ type Mutation {
   adminSeed: [Post]
   createComment(input: createCommentInput): Comment
   createPost(input: createPostInput): Post
-  createUser: User
   createUserCommentVote(input: createUserCommentVoteInput): Comment
   createUserPostVote(input: createUserPostVoteInput): Post
   deleteComment(id: ID): Comment
@@ -51,6 +50,7 @@ type Mutation {
   deleteUser(id: ID): User
   deleteUserCommentVote(commentId: ID): Comment
   deleteUserPostVote(postId: ID): Post
+  setUsername(username: String): User
   updateComment(input: updateCommentInput): Comment
   updatePost(input: updatePostInput): Post
 }

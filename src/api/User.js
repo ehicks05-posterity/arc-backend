@@ -6,9 +6,11 @@ const {
   list,
   inputObjectType,
   enumType,
+  stringArg,
 } = require("nexus");
 const { User, UserPostVote, UserCommentVote } = require("nexus-prisma");
 const { getFakeUser } = require("./utils");
+const { z } = require("zod");
 
 module.exports.User = objectType({
   name: User.$name,
@@ -198,6 +200,45 @@ module.exports.getMe = queryField("getMe", {
 module.exports.createUser = mutationField("createUser", {
   type: "User",
   resolve(_, _args, ctx) {
+    return ctx.prisma.user.create({
+      data: {
+        ...getFakeUser(),
+      },
+    });
+  },
+});
+
+module.exports.createUser = mutationField("setUsername", {
+  type: "User",
+  args: { username: stringArg() },
+  resolve(_, args, ctx) {
+    const { username } = args;
+    const { user } = ctx;
+
+    // validate length and characters
+    const usernameSchema = z
+      .string()
+      .regex(/^[a-zA-Z0-9-_]*$/)
+      .min(3)
+      .max(24);
+
+    const parsed = usernameSchema.safeParse(username);
+    if (!parsed.success) throw new Error(parsed.error);
+
+    // validate uniqueness
+    // 1. check public.users table
+    // 2. if not found, save it there
+    // 3. then also save it to auth.users so it is always returned with the auth user
+    const result = await ctx.prisma.user.findMany({ where: { username } });
+    if (result.length !== 0) throw new Error("username already exists");
+
+    await ctx.prisma.user.update({
+      where: { id: user.id },
+      data: { username },
+    });
+
+    ctx.supabase.auth.update();
+
     return ctx.prisma.user.create({
       data: {
         ...getFakeUser(),
