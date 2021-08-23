@@ -211,7 +211,7 @@ module.exports.createUser = mutationField("createUser", {
 module.exports.createUser = mutationField("setUsername", {
   type: "User",
   args: { username: stringArg() },
-  resolve(_, args, ctx) {
+  async resolve(_, args, ctx) {
     const { username } = args;
     const { user } = ctx;
 
