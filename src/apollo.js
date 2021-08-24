@@ -18,7 +18,7 @@ const createApolloServer = () => {
         prisma,
         supabase,
         req,
-        user: req.user,
+        user: { ...req.user, id: req.user.sub },
       };
     },
     plugins: [ApolloServerPluginInlineTrace()],
