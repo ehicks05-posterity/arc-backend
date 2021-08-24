@@ -155,6 +155,7 @@ export interface NexusGenFieldTypes {
     adminSeed: Array<NexusGenRootTypes['Post'] | null> | null; // [Post]
     createComment: NexusGenRootTypes['Comment'] | null; // Comment
     createPost: NexusGenRootTypes['Post'] | null; // Post
+    createUser: NexusGenRootTypes['User'] | null; // User
     createUserCommentVote: NexusGenRootTypes['Comment'] | null; // Comment
     createUserPostVote: NexusGenRootTypes['Post'] | null; // Post
     deleteComment: NexusGenRootTypes['Comment'] | null; // Comment
@@ -162,7 +163,7 @@ export interface NexusGenFieldTypes {
     deleteUser: NexusGenRootTypes['User'] | null; // User
     deleteUserCommentVote: NexusGenRootTypes['Comment'] | null; // Comment
     deleteUserPostVote: NexusGenRootTypes['Post'] | null; // Post
-    setUsername: NexusGenRootTypes['User'] | null; // User
+    setUsername: string | null; // String
     updateComment: NexusGenRootTypes['Comment'] | null; // Comment
     updatePost: NexusGenRootTypes['Post'] | null; // Post
   }
@@ -246,6 +247,7 @@ export interface NexusGenFieldTypeNames {
     adminSeed: 'Post'
     createComment: 'Comment'
     createPost: 'Post'
+    createUser: 'User'
     createUserCommentVote: 'Comment'
     createUserPostVote: 'Post'
     deleteComment: 'Comment'
@@ -253,7 +255,7 @@ export interface NexusGenFieldTypeNames {
     deleteUser: 'User'
     deleteUserCommentVote: 'Comment'
     deleteUserPostVote: 'Post'
-    setUsername: 'User'
+    setUsername: 'String'
     updateComment: 'Comment'
     updatePost: 'Post'
   }

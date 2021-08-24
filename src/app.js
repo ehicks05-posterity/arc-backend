@@ -38,38 +38,17 @@ app.get("/", (req, res) => {
 app.get("/test", checkJwt, async (req, res) => {
   const user = req.user;
   if (!user) {
-    res.send("user not found");
+    res.send("not authenticated");
     return;
   }
-  const result = await prisma.$queryRaw`
-    SELECT *, id, u.raw_app_meta_data
-    FROM auth.users u`;
-  const result2 = await prisma.$queryRaw`
-    SELECT distinct u.raw_app_meta_data
-    FROM auth.users u`;
 
-  res.json(result);
+  res.send("authenticated");
 });
 
-const setUsername = `
-  update auth.users 
-  set raw_app_meta_data = raw_app_meta_data || '{"username": "ehicks05"}'
-  where email='ehicks05@yahoo.com';
-`;
-
-const findUsername = `
-select raw_app_meta_data->>'username' 
-from auth.users where raw_app_meta_data->>'username' = 'ehicks05';
-`;
-
-const findAuthUser = `
-select * from auth.users where id = ${id};
-`;
-
 app.get("/me", checkJwt, async (req, res) => {
-  const authUser = await prisma.$executeRaw(`
-select * from auth.users where id = ${req?.user.id};
-`);
+  const authUser = await prisma.$executeRaw(
+    `select * from auth.users where id = ${req?.user.id};`
+  );
   res.json({
     message: "Hello! This is an authenticated route.",
     user: req.user,

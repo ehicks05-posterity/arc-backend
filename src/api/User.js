@@ -208,12 +208,22 @@ module.exports.createUser = mutationField("createUser", {
   },
 });
 
-module.exports.createUser = mutationField("setUsername", {
-  type: "User",
+module.exports.setUsername = mutationField("setUsername", {
+  type: "String",
   args: { username: stringArg() },
   async resolve(_, args, ctx) {
     const { username } = args;
     const { user } = ctx;
+
+    if (!user) throw new Error("Not authenticated");
+
+    // does user have a username?
+    const currentUsername = await ctx.prisma.$queryRaw(`
+      select raw_app_meta_data ->> 'username' as username
+        from auth.users where id = '${user.id}';
+    `);
+    if (currentUsername?.[0].username)
+      throw new Error("user already has a username");
 
     // validate length and characters
     const usernameSchema = z
@@ -226,24 +236,20 @@ module.exports.createUser = mutationField("setUsername", {
     if (!parsed.success) throw new Error(parsed.error);
 
     // validate uniqueness
-    // 1. check public.users table
-    // 2. if not found, save it there
-    // 3. then also save it to auth.users so it is always returned with the auth user
-    const result = await ctx.prisma.user.findMany({ where: { username } });
-    if (result.length !== 0) throw new Error("username already exists");
+    const usernameExists = await ctx.prisma.$queryRaw(`
+      select raw_app_meta_data ->> 'username' 
+        from auth.users where raw_app_meta_data->>'username' = '${username}';
+    `);
+    if (usernameExists.length !== 0) throw new Error("username already exists");
 
-    await ctx.prisma.user.update({
-      where: { id: user.id },
-      data: { username },
-    });
+    await ctx.prisma.$queryRaw(`
+      update auth.users 
+        set raw_app_meta_data = raw_app_meta_data || '{"username": "${username}"}'
+        where id='${user.id}';
+    `);
+    console.log(updateAuthUser);
 
-    ctx.supabase.auth.update();
-
-    return ctx.prisma.user.create({
-      data: {
-        ...getFakeUser(),
-      },
-    });
+    return "ok";
   },
 });
 
