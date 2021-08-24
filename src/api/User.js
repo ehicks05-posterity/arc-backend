@@ -233,7 +233,8 @@ module.exports.setUsername = mutationField("setUsername", {
       .max(24);
 
     const parsed = usernameSchema.safeParse(username);
-    if (!parsed.success) throw new Error(parsed.error);
+    if (!parsed.success)
+      throw new Error(JSON.parse(parsed.error.message)[0].message);
 
     // validate uniqueness
     const usernameExists = await ctx.prisma.$queryRaw(`
@@ -247,7 +248,6 @@ module.exports.setUsername = mutationField("setUsername", {
         set raw_app_meta_data = raw_app_meta_data || '{"username": "${username}"}'
         where id='${user.id}';
     `);
-    console.log(updateAuthUser);
 
     return "ok";
   },
