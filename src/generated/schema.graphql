@@ -38,12 +38,10 @@ enum Direction {
 }
 
 type Mutation {
-  adminCreatePost: Post
   adminNuke: Post
   adminSeed: [Post]
   createComment(input: createCommentInput): Comment
   createPost(input: createPostInput): Post
-  createUser: User
   createUserCommentVote(input: createUserCommentVoteInput): Comment
   createUserPostVote(input: createUserPostVoteInput): Post
   deleteComment(id: ID): Comment

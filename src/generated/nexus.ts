@@ -150,12 +150,10 @@ export interface NexusGenFieldTypes {
     userVote: NexusGenRootTypes['UserCommentVote'] | null; // UserCommentVote
   }
   Mutation: { // field return type
-    adminCreatePost: NexusGenRootTypes['Post'] | null; // Post
     adminNuke: NexusGenRootTypes['Post'] | null; // Post
     adminSeed: Array<NexusGenRootTypes['Post'] | null> | null; // [Post]
     createComment: NexusGenRootTypes['Comment'] | null; // Comment
     createPost: NexusGenRootTypes['Post'] | null; // Post
-    createUser: NexusGenRootTypes['User'] | null; // User
     createUserCommentVote: NexusGenRootTypes['Comment'] | null; // Comment
     createUserPostVote: NexusGenRootTypes['Post'] | null; // Post
     deleteComment: NexusGenRootTypes['Comment'] | null; // Comment
@@ -242,12 +240,10 @@ export interface NexusGenFieldTypeNames {
     userVote: 'UserCommentVote'
   }
   Mutation: { // field return type name
-    adminCreatePost: 'Post'
     adminNuke: 'Post'
     adminSeed: 'Post'
     createComment: 'Comment'
     createPost: 'Post'
-    createUser: 'User'
     createUserCommentVote: 'Comment'
     createUserPostVote: 'Post'
     deleteComment: 'Comment'

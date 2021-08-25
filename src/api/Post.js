@@ -8,7 +8,7 @@ const {
   inputObjectType,
 } = require("nexus");
 const { Post } = require("nexus-prisma");
-const { adminCreatePost, adminSeed, adminNuke } = require("./utils");
+const { adminSeed, adminNuke } = require("./utils");
 
 const SORTS = ["HOT", "TOP", "NEW"];
 module.exports.Sort = enumType({
@@ -143,13 +143,6 @@ module.exports.createPost = mutationField("createPost", {
       content,
     };
     return ctx.prisma.post.create({ data });
-  },
-});
-
-module.exports.adminCreatePost = mutationField("adminCreatePost", {
-  type: "Post",
-  resolve() {
-    return adminCreatePost();
   },
 });
 

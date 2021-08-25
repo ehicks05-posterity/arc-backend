@@ -9,7 +9,6 @@ const {
   stringArg,
 } = require("nexus");
 const { User, UserPostVote, UserCommentVote } = require("nexus-prisma");
-const { getFakeUser } = require("./utils");
 const { z } = require("zod");
 
 module.exports.User = objectType({
@@ -197,17 +196,6 @@ module.exports.getMe = queryField("getMe", {
   },
 });
 
-module.exports.createUser = mutationField("createUser", {
-  type: "User",
-  resolve(_, _args, ctx) {
-    return ctx.prisma.user.create({
-      data: {
-        ...getFakeUser(),
-      },
-    });
-  },
-});
-
 module.exports.setUsername = mutationField("setUsername", {
   type: "String",
   args: { username: stringArg() },
@@ -248,6 +236,8 @@ module.exports.setUsername = mutationField("setUsername", {
         set raw_app_meta_data = raw_app_meta_data || '{"username": "${username}"}'
         where id='${user.id}';
     `);
+
+    await ctx.prisma.user.create({ data: { username } });
 
     return "ok";
   },
