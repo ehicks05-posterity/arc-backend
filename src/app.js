@@ -57,13 +57,15 @@ app.get("/me", checkJwt, async (req, res) => {
 });
 
 app.use(checkJwt, async (req, res, next) => {
-  if (req.user) {
-    console.log(req.user.sub);
-    const id = req.user.sub;
-    const user = await prisma.user.findUnique({ where: { id } });
+  const username = req.user?.app_metadata?.username;
+  if (username) {
+    const user = await prisma.user.findUnique({ where: { id: username } });
     if (!user) {
-      console.log(`incoming user ${id} is missing from db. creating...`);
-      await prisma.user.create({ data: { id, username: id } });
+      console.log(req.user);
+      console.log(
+        `incoming user ${username} is missing from public.users. creating...`
+      );
+      await prisma.user.create({ data: { id: username } });
     }
   }
   next();

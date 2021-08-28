@@ -74,7 +74,7 @@ module.exports.Post = objectType({
     t.field("userVote", {
       type: "UserPostVote",
       resolve(root, args, ctx) {
-        const userId = ctx.user?.sub;
+        const userId = ctx.user?.id;
         if (!userId) return null;
 
         return ctx.prisma.userPostVote.findUnique({
@@ -132,7 +132,7 @@ module.exports.createPost = mutationField("createPost", {
   type: "Post",
   args: { input: this.createPostInput },
   resolve(_, args, ctx) {
-    const authorId = ctx.user?.sub;
+    const authorId = ctx.user?.id;
     if (!authorId) throw new Error("Author is required");
 
     const { title, link, content } = args.input;
@@ -172,7 +172,7 @@ module.exports.updatePost = mutationField("updatePost", {
   type: "Post",
   args: { input: this.updatePostInput },
   async resolve(_, args, ctx) {
-    const userId = ctx.user?.sub;
+    const userId = ctx.user?.id;
     if (!userId) throw new Error("userId is required");
 
     const { id, content } = args.input;
@@ -192,7 +192,7 @@ module.exports.deletePost = mutationField("deletePost", {
   type: "Post",
   args: { id: idArg() },
   async resolve(_, args, ctx) {
-    const userId = ctx.user?.sub;
+    const userId = ctx.user?.id;
     if (!userId) throw new Error("userId is required");
 
     const { id } = args;

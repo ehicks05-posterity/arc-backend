@@ -1,6 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["orderByRelation"]
+  provider = "prisma-client-js"
 }
 
 generator nexusPrisma {
@@ -14,8 +13,8 @@ datasource db {
 
 /// A User...
 model User {
-  id           String            @id @default(uuid())
-  username     String
+  /// username
+  id           String            @id
   createdAt    DateTime          @default(now()) @db.Timestamptz
   updatedAt    DateTime          @updatedAt @db.Timestamptz
   posts        Post[]

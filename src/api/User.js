@@ -16,7 +16,6 @@ module.exports.User = objectType({
   description: User.$description,
   definition(t) {
     t.field(User.id);
-    t.field(User.username);
     t.field(User.createdAt);
     t.field(User.updatedAt);
     t.field(User.posts);
@@ -74,7 +73,7 @@ module.exports.createUserPostVote = mutationField("createUserPostVote", {
   type: "Post",
   args: { input: this.createUserPostVoteInput },
   async resolve(_, args, ctx) {
-    const userId = ctx.user?.sub;
+    const userId = ctx.user?.id;
     if (!userId) throw new Error("userId is required");
 
     const { postId, direction: directionArg } = args.input;
@@ -98,7 +97,7 @@ module.exports.deleteUserPostVote = mutationField("deleteUserPostVote", {
   type: "Post",
   args: { postId: idArg() },
   async resolve(_, args, ctx) {
-    const userId = ctx.user?.sub;
+    const userId = ctx.user?.id;
     if (!userId) throw new Error("userId is required");
 
     const { postId } = args;
@@ -127,7 +126,7 @@ module.exports.createUserCommentVote = mutationField("createUserCommentVote", {
   type: "Comment",
   args: { input: this.createUserCommentVoteInput },
   async resolve(_, args, ctx) {
-    const userId = ctx.user?.sub;
+    const userId = ctx.user?.id;
     if (!userId) throw new Error("userId is required");
 
     const { commentId, direction: directionArg } = args.input;
@@ -151,7 +150,7 @@ module.exports.deleteUserCommentVote = mutationField("deleteUserCommentVote", {
   type: "Comment",
   args: { commentId: idArg() },
   async resolve(_, args, ctx) {
-    const userId = ctx.user?.sub;
+    const userId = ctx.user?.id;
     if (!userId) throw new Error("userId is required");
 
     const { commentId } = args;
@@ -191,7 +190,7 @@ module.exports.getMe = queryField("getMe", {
   resolve(_, _args, ctx) {
     const { user } = ctx;
     return ctx.prisma.user.findUnique({
-      where: { id: user?.sub },
+      where: { id: user?.id },
     });
   },
 });
