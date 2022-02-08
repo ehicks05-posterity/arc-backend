@@ -1,8 +1,6 @@
 const _ = require("lodash");
-const faker = require("faker");
-const { PrismaClient } = require("@prisma/client");
-
-const prisma = new PrismaClient();
+const { faker } = require("@faker-js/faker");
+const prisma = require('../prisma');
 
 const adminNuke = async () => {
   await prisma.userPostVote.deleteMany();
@@ -13,7 +11,7 @@ const adminNuke = async () => {
 };
 
 const POST_COUNT = 10;
-const USER_COUNT = 1000;
+const USER_COUNT = 100;
 const MAX_COMMENTS_PER_POST = 20;
 const MAX_VOTES_PER_POST = USER_COUNT;
 const MAX_VOTES_PER_COMMENT = USER_COUNT / 10;
@@ -21,9 +19,13 @@ const MAX_VOTES_PER_COMMENT = USER_COUNT / 10;
 const adminSeed = async () => {
   console.log("creating users...");
   await prisma.user.createMany({
-    data: [...Array(USER_COUNT)].map(() => ({
-      id: faker.internet.userName(),
-    })),
+    data: [...Array(USER_COUNT)].map(() => {
+      const username = faker.internet.userName();
+      return {
+        id: username,
+        username,
+      }
+    }),
   });
   const users = await prisma.user.findMany();
 
@@ -89,7 +91,7 @@ const adminSeed = async () => {
     .flat();
   await prisma.userCommentVote.createMany({ data: userCommentVoteData });
 
-  await prisma.$executeRaw("call updatescore();");
+  await prisma.$executeRaw`call updatescore();`;
   return prisma.post.findMany();
 };
 

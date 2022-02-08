@@ -1,14 +1,12 @@
 const morgan = require("morgan");
+require("dotenv").config();
+const prisma = require('./prisma');
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
 require("./apollo");
 const jwt = require("express-jwt");
 const { createApolloServer } = require("./apollo");
 const { scheduleUpdateScoresProcedure } = require("./tasks");
-
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
 
 const app = express();
 app.use(cors({ origin: ["https://arc.ehicks.net", "http://localhost:3000"] }));
@@ -46,9 +44,8 @@ app.get("/test", checkJwt, async (req, res) => {
 });
 
 app.get("/me", checkJwt, async (req, res) => {
-  const authUser = await prisma.$executeRaw(
-    `select * from auth.users where id = ${req?.user.id};`
-  );
+  const authUser = await prisma.$executeRaw
+    `select * from auth.users where id = ${req?.user.id};`;
   res.json({
     message: "Hello! This is an authenticated route.",
     user: req.user,

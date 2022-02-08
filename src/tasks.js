@@ -1,10 +1,13 @@
 const schedule = require("node-schedule");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require('./prisma');
 
 module.exports.scheduleUpdateScoresProcedure = () => schedule.scheduleJob(
   "*/15 * * * * *",
   async function () {
-    await prisma.$executeRaw("call updatescore();");
+    try {
+      await prisma.$executeRaw`call updatescore();`;
+    } catch (e) {
+      console.log(e);
+    }
   }
 );

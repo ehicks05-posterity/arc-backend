@@ -205,10 +205,10 @@ module.exports.setUsername = mutationField("setUsername", {
     if (!user) throw new Error("Not authenticated");
 
     // does user have a username?
-    const currentUsername = await ctx.prisma.$queryRaw(`
+    const currentUsername = await ctx.prisma.$queryRaw`
       select raw_app_meta_data ->> 'username' as username
         from auth.users where id = '${user.id}';
-    `);
+    `;
     if (currentUsername?.[0].username)
       throw new Error("user already has a username");
 
@@ -224,17 +224,17 @@ module.exports.setUsername = mutationField("setUsername", {
       throw new Error(JSON.parse(parsed.error.message)[0].message);
 
     // validate uniqueness
-    const usernameExists = await ctx.prisma.$queryRaw(`
+    const usernameExists = await ctx.prisma.$queryRaw`
       select raw_app_meta_data ->> 'username' 
         from auth.users where raw_app_meta_data->>'username' = '${username}';
-    `);
+    `;
     if (usernameExists.length !== 0) throw new Error("username already exists");
 
-    await ctx.prisma.$queryRaw(`
+    await ctx.prisma.$queryRaw`
       update auth.users 
         set raw_app_meta_data = raw_app_meta_data || '{"username": "${username}"}'
         where id='${user.id}';
-    `);
+    `;
 
     await ctx.prisma.user.create({ data: { username } });
 

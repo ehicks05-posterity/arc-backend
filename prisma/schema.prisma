@@ -15,6 +15,7 @@ datasource db {
 model User {
   /// username
   id           String            @id
+  username     String
   createdAt    DateTime          @default(now()) @db.Timestamptz
   updatedAt    DateTime          @updatedAt @db.Timestamptz
   posts        Post[]
@@ -47,7 +48,7 @@ model Comment {
   updatedAt       DateTime          @updatedAt @db.Timestamptz
   post            Post              @relation(fields: [postId], references: [id])
   postId          String
-  parentComment   Comment?          @relation(fields: [parentCommentId], references: [id])
+  parentComment   Comment?          @relation("CommentToComment", fields: [parentCommentId], references: [id])
   parentCommentId String?
   author          User?             @relation(fields: [authorId], references: [id])
   authorId        String?
