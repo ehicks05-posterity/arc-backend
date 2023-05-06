@@ -1,4 +1,4 @@
-const { GraphQLDateTime } = require("graphql-iso-date");
+const { GraphQLDateTime } = require("graphql-scalars");
 const { asNexusMethod } = require("nexus");
 
 module.exports.DateTime = asNexusMethod(GraphQLDateTime, "DateTime");
