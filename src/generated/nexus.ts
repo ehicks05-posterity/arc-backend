@@ -185,7 +185,7 @@ export interface NexusGenFieldTypes {
     getComments: Array<NexusGenRootTypes['Comment'] | null> | null; // [Comment]
     getMe: NexusGenRootTypes['User'] | null; // User
     getPostById: NexusGenRootTypes['Post'] | null; // Post
-    getPosts: Array<NexusGenRootTypes['Post'] | null> | null; // [Post]
+    getPosts: NexusGenRootTypes['Post'][]; // [Post!]!
     getUser: NexusGenRootTypes['User'] | null; // User
     getUsers: Array<NexusGenRootTypes['User'] | null> | null; // [User]
   }

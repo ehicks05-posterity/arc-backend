@@ -76,7 +76,7 @@ type Query {
   getComments: [Comment]
   getMe: User
   getPostById(id: ID): Post
-  getPosts(sort: Sort): [Post]
+  getPosts(sort: Sort): [Post!]!
   getUser(id: ID): User
   getUsers: [User]
 }

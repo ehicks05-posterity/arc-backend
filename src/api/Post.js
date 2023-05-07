@@ -6,6 +6,7 @@ const {
   idArg,
   enumType,
   inputObjectType,
+  nonNull,
 } = require("nexus");
 const { Post } = require("nexus-prisma");
 const { adminSeed, adminNuke } = require("./utils");
@@ -91,7 +92,7 @@ module.exports.Post = objectType({
 });
 
 module.exports.getPosts = queryField("getPosts", {
-  type: list("Post"),
+  type: nonNull(list(nonNull("Post"))),
   args: { sort: "Sort" },
   resolve(_, args, ctx) {
     const { sort } = args;
