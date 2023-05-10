@@ -27,15 +27,15 @@ module.exports.Post = objectType({
   name: Post.$name,
   description: Post.$description,
   definition(t) {
-    t.field(Post.id);
-    t.field(Post.title);
-    t.field(Post.link);
-    t.field(Post.content);
-    t.field(Post.deleted);
-    t.field(Post.author);
-    t.string("authorId");
-    t.field(Post.comments);
-    t.list.field("comments", {
+    t.nonNull.field(Post.id);
+    t.nonNull.field(Post.title);
+    t.nonNull.field(Post.link);
+    t.nonNull.field(Post.content);
+    t.nonNull.field(Post.deleted);
+    t.nonNull.field(Post.author);
+    t.nonNull.string("authorId");
+    t.nonNull.field(Post.comments);
+    t.nonNull.list.nonNull.field("comments", {
       type: "Comment",
       args: { commentSort: "CommentSort" },
       async resolve(root, args, ctx) {
@@ -55,15 +55,15 @@ module.exports.Post = objectType({
         });
       },
     });
-    t.int("commentCount", {
+    t.nonNull.int("commentCount", {
       resolve(root, _args, ctx) {
         return ctx.prisma.comment.count({
           where: { postId: root.id },
         });
       },
     });
-    t.field(Post.createdAt);
-    t.field(Post.updatedAt);
+    t.nonNull.field(Post.createdAt);
+    t.nonNull.field(Post.updatedAt);
     t.nonNull.int("netVotes", {
       async resolve(root, _args, ctx) {
         const result = await ctx.prisma
@@ -71,7 +71,7 @@ module.exports.Post = objectType({
         return result[0].netVotes;
       },
     });
-    t.field(Post.score);
+    t.nonNull.field(Post.score);
     t.field("userVote", {
       type: "UserPostVote",
       resolve(root, args, ctx) {

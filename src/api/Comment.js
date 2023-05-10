@@ -12,20 +12,20 @@ module.exports.Comment = objectType({
   name: Comment.$name,
   description: Comment.$description,
   definition(t) {
-    t.field(Comment.id);
-    t.field(Comment.content);
-    t.field(Comment.deleted);
-    t.field(Comment.level);
-    t.field(Comment.author);
-    t.string("authorId");
-    t.field(Comment.post);
+    t.nonNull.field(Comment.id);
+    t.nonNull.field(Comment.content);
+    t.nonNull.field(Comment.deleted);
+    t.nonNull.field(Comment.level);
+    t.nonNull.field(Comment.author);
+    t.nonNull.string("authorId");
+    t.nonNull.field(Comment.post);
     t.nonNull.string("postId");
     t.field(Comment.parentComment);
     t.string("parentCommentId");
-    t.field(Comment.comments);
-    t.field(Comment.score);
-    t.field(Comment.createdAt);
-    t.field(Comment.updatedAt);
+    t.nonNull.field(Comment.comments);
+    t.nonNull.field(Comment.score);
+    t.nonNull.field(Comment.createdAt);
+    t.nonNull.field(Comment.updatedAt);
     t.nonNull.int("netVotes", {
       async resolve(root, _args, ctx) {
         const result = await ctx.prisma

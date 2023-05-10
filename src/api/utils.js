@@ -32,7 +32,7 @@ const adminSeed = async () => {
   console.log("creating posts...");
   await prisma.post.createMany({
     data: [...Array(POST_COUNT)].map(() => ({
-      title: faker.lorem.words(Math.random() * 2 + 3),
+      title: faker.hacker.phrase(),
       content: faker.lorem.paragraphs(),
       link: "https://www.google.com",
       authorId: _.sample(users).id,
