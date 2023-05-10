@@ -72,10 +72,6 @@ app.use("/graphql", checkJwt);
 
 const port = process.env.NODE_ENV === "production" ? process.env.PORT : 4000;
 console.log(`process.env.NODE_ENV: ${process.env.NODE_ENV}`);
-console.log(`process.env.PORT: ${process.env.PORT}`);
-
-const db_url = process.env.DATABASE_URL;
-console.log(`DB: ${db_url.slice(db_url.indexOf("@") + 1)}`);
 
 async function startApolloServer() {
   const apolloServer = createApolloServer();

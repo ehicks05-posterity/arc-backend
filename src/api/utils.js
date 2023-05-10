@@ -10,9 +10,9 @@ const adminNuke = async () => {
   await prisma.user.deleteMany();
 };
 
-const POST_COUNT = 10;
+const POST_COUNT = 30;
 const USER_COUNT = 100;
-const MAX_COMMENTS_PER_POST = 20;
+const MAX_COMMENTS_PER_POST = 50;
 const MAX_VOTES_PER_POST = USER_COUNT;
 const MAX_VOTES_PER_COMMENT = USER_COUNT / 10;
 
@@ -50,7 +50,7 @@ const adminSeed = async () => {
       const parent = isChild ? _.sample(comments) : undefined;
       const comment = await prisma.comment.create({
         data: {
-          content: faker.lorem.paragraphs(),
+          content: faker.lorem.paragraphs(Math.round(Math.random() * 10)),
           postId: p.id,
           authorId: _.sample(users).id,
           parentCommentId: parent?.id,
