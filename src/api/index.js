@@ -1,9 +1,9 @@
-const { DateTime } = require("./Datetime");
-const PostTypes = require("./Post");
-const CommentTypes = require("./Comment");
-const UserTypes = require("./User");
+import { DateTime } from './Datetime';
+import * as PostTypes from './Post';
+import * as CommentTypes from './Comment';
+import * as UserTypes from './User';
 
-module.exports.types = {
+export const types = {
   DateTime,
   ...PostTypes,
   ...CommentTypes,

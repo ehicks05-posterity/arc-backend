@@ -1,13 +1,12 @@
-const schedule = require("node-schedule");
-const prisma = require('./prisma');
+import { scheduleJob } from 'node-schedule';
+import prisma from './prisma';
 
-module.exports.scheduleUpdateScoresProcedure = () => schedule.scheduleJob(
-  "*/15 * * * * *",
-  async function () {
+export function scheduleUpdateScoresProcedure() {
+  return scheduleJob('*/15 * * * * *', async () => {
     try {
       await prisma.$executeRaw`call updatescore();`;
     } catch (e) {
       console.log(e);
     }
-  }
-);
+  });
+}

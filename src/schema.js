@@ -1,10 +1,10 @@
-const { makeSchema } = require("nexus");
-const { types } = require("./api/index");
+import { makeSchema } from 'nexus';
+import { types } from './api/index';
 
-module.exports.schema = makeSchema({
+export const schema = makeSchema({
   outputs: {
-    schema: __dirname + "/generated/schema.graphql",
-    typegen: __dirname + "/generated/nexus.ts",
+    schema: `${__dirname}/generated/schema.graphql`,
+    typegen: `${__dirname}/generated/nexus.ts`,
   },
   types,
 });

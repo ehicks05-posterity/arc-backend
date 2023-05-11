@@ -1,4 +1,4 @@
-const {
+import {
   objectType,
   queryField,
   mutationField,
@@ -7,23 +7,23 @@ const {
   enumType,
   inputObjectType,
   nonNull,
-} = require("nexus");
-const { Post } = require("nexus-prisma");
-const { adminSeed, adminNuke } = require("./utils");
+} from 'nexus';
+import { Post } from 'nexus-prisma';
+import { adminSeed, adminNuke } from './utils';
 
-const SORTS = ["HOT", "TOP", "NEW"];
-module.exports.Sort = enumType({
-  name: "Sort",
+const SORTS = ['HOT', 'TOP', 'NEW'];
+export const Sort = enumType({
+  name: 'Sort',
   members: SORTS,
 });
 
-const COMMENT_SORTS = ["BEST", "TOP", "NEW"];
-module.exports.CommentSort = enumType({
-  name: "CommentSort",
+const COMMENT_SORTS = ['BEST', 'TOP', 'NEW'];
+export const CommentSort = enumType({
+  name: 'CommentSort',
   members: COMMENT_SORTS,
 });
 
-module.exports.Post = objectType({
+const _Post = objectType({
   name: Post.$name,
   description: Post.$description,
   definition(t) {
@@ -33,21 +33,21 @@ module.exports.Post = objectType({
     t.nonNull.field(Post.content);
     t.nonNull.field(Post.deleted);
     t.nonNull.field(Post.author);
-    t.nonNull.string("authorId");
+    t.nonNull.string('authorId');
     t.nonNull.field(Post.comments);
-    t.nonNull.list.nonNull.field("comments", {
-      type: "Comment",
-      args: { commentSort: "CommentSort" },
+    t.nonNull.list.nonNull.field('comments', {
+      type: 'Comment',
+      args: { commentSort: 'CommentSort' },
       async resolve(root, args, ctx) {
         const { commentSort } = args;
         const commentSortClause =
-          commentSort === "BEST"
-            ? { score: "desc" }
-            : commentSort === "TOP"
-            ? { score: "desc" }
-            : commentSort === "NEW"
-            ? { createdAt: "desc" }
-            : { score: "desc" };
+          commentSort === 'BEST'
+            ? { score: 'desc' }
+            : commentSort === 'TOP'
+            ? { score: 'desc' }
+            : commentSort === 'NEW'
+            ? { createdAt: 'desc' }
+            : { score: 'desc' };
 
         return ctx.prisma.comment.findMany({
           where: { postId: root.id },
@@ -55,7 +55,7 @@ module.exports.Post = objectType({
         });
       },
     });
-    t.nonNull.int("commentCount", {
+    t.nonNull.int('commentCount', {
       resolve(root, _args, ctx) {
         return ctx.prisma.comment.count({
           where: { postId: root.id },
@@ -64,7 +64,7 @@ module.exports.Post = objectType({
     });
     t.nonNull.field(Post.createdAt);
     t.nonNull.field(Post.updatedAt);
-    t.nonNull.int("netVotes", {
+    t.nonNull.int('netVotes', {
       async resolve(root, _args, ctx) {
         const result = await ctx.prisma
           .$queryRaw`select getNetVotes(id, "createdAt") as "netVotes" from "Post" where id = ${root.id};`;
@@ -72,8 +72,8 @@ module.exports.Post = objectType({
       },
     });
     t.nonNull.field(Post.score);
-    t.field("userVote", {
-      type: "UserPostVote",
+    t.field('userVote', {
+      type: 'UserPostVote',
       resolve(root, args, ctx) {
         const userId = ctx.user?.id;
         if (!userId) return null;
@@ -90,29 +90,29 @@ module.exports.Post = objectType({
     });
   },
 });
+export { _Post as Post };
 
-module.exports.getPosts = queryField("getPosts", {
-  type: nonNull(list(nonNull("Post"))),
-  args: { sort: "Sort" },
+export const getPosts = queryField('getPosts', {
+  type: nonNull(list(nonNull('Post'))),
+  args: { sort: 'Sort' },
   resolve(_, args, ctx) {
     const { sort } = args;
-    if (sort === "HOT") {
-      return ctx.prisma.post.findMany({ orderBy: { score: "desc" } });
+    if (sort === 'HOT') {
+      return ctx.prisma.post.findMany({ orderBy: { score: 'desc' } });
     }
-    if (sort === "NEW") {
-      return ctx.prisma.post.findMany({ orderBy: { createdAt: "desc" } });
+    if (sort === 'NEW') {
+      return ctx.prisma.post.findMany({ orderBy: { createdAt: 'desc' } });
     }
-    if (sort === "TOP") {
-      return ctx.prisma.$queryRaw
-        `select * from "Post" order by getNetVotes(id, "createdAt") desc;`
-      ;
+    if (sort === 'TOP') {
+      return ctx.prisma
+        .$queryRaw`select * from "Post" order by getNetVotes(id, "createdAt") desc;`;
     }
-    return ctx.prisma.post.findMany({ orderBy: { score: "desc" } });
+    return ctx.prisma.post.findMany({ orderBy: { score: 'desc' } });
   },
 });
 
-module.exports.getPostById = queryField("getPostById", {
-  type: "Post",
+export const getPostById = queryField('getPostById', {
+  type: 'Post',
   args: { id: idArg() },
   resolve(_, args, ctx) {
     const { id } = args;
@@ -120,21 +120,21 @@ module.exports.getPostById = queryField("getPostById", {
   },
 });
 
-module.exports.createPostInput = inputObjectType({
-  name: "createPostInput",
+export const createPostInput = inputObjectType({
+  name: 'createPostInput',
   definition(t) {
-    t.nonNull.string("title");
-    t.string("link");
-    t.string("content");
+    t.nonNull.string('title');
+    t.string('link');
+    t.string('content');
   },
 });
 
-module.exports.createPost = mutationField("createPost", {
-  type: "Post",
+export const createPost = mutationField('createPost', {
+  type: 'Post',
   args: { input: this.createPostInput },
   resolve(_, args, ctx) {
     const authorId = ctx.user?.id;
-    if (!authorId) throw new Error("Author is required");
+    if (!authorId) throw new Error('Author is required');
 
     const { title, link, content } = args.input;
     const data = {
@@ -147,40 +147,42 @@ module.exports.createPost = mutationField("createPost", {
   },
 });
 
-module.exports.adminSeed = mutationField("adminSeed", {
-  type: list("Post"),
+const _adminSeed = mutationField('adminSeed', {
+  type: list('Post'),
   resolve() {
     return adminSeed();
   },
 });
+export { _adminSeed as adminSeed };
 
-module.exports.adminNuke = mutationField("adminNuke", {
-  type: "Post",
+const _adminNuke = mutationField('adminNuke', {
+  type: 'Post',
   resolve() {
     return adminNuke();
   },
 });
+export { _adminNuke as adminNuke };
 
-module.exports.updatePostInput = inputObjectType({
-  name: "updatePostInput",
+export const updatePostInput = inputObjectType({
+  name: 'updatePostInput',
   definition(t) {
-    t.nonNull.id("id");
-    t.nonNull.string("content");
+    t.nonNull.id('id');
+    t.nonNull.string('content');
   },
 });
 
-module.exports.updatePost = mutationField("updatePost", {
-  type: "Post",
+export const updatePost = mutationField('updatePost', {
+  type: 'Post',
   args: { input: this.updatePostInput },
   async resolve(_, args, ctx) {
     const userId = ctx.user?.id;
-    if (!userId) throw new Error("userId is required");
+    if (!userId) throw new Error('userId is required');
 
     const { id, content } = args.input;
 
     const post = await ctx.prisma.post.findUnique({ where: { id } });
     if (post.authorId !== userId)
-      throw new Error("you can only update your own posts");
+      throw new Error('you can only update your own posts');
 
     return ctx.prisma.post.update({
       where: { id },
@@ -189,24 +191,24 @@ module.exports.updatePost = mutationField("updatePost", {
   },
 });
 
-module.exports.deletePost = mutationField("deletePost", {
-  type: "Post",
+export const deletePost = mutationField('deletePost', {
+  type: 'Post',
   args: { id: idArg() },
   async resolve(_, args, ctx) {
     const userId = ctx.user?.id;
-    if (!userId) throw new Error("userId is required");
+    if (!userId) throw new Error('userId is required');
 
     const { id } = args;
 
     const post = await ctx.prisma.post.findUnique({ where: { id } });
     if (post.authorId !== userId)
-      throw new Error("you can only delete your own posts");
+      throw new Error('you can only delete your own posts');
 
     return ctx.prisma.post.update({
       where: { id },
       data: {
         deleted: true,
-        content: "[Deleted]",
+        content: '[Deleted]',
         author: { disconnect: true },
       },
     });

@@ -1,12 +1,12 @@
-const { ApolloServer } = require("apollo-server-express");
-const { ApolloServerPluginInlineTrace } = require("apollo-server-core");
-import { createClient } from "@supabase/supabase-js";
-const { schema } = require("./schema");
-const prisma = require('./prisma');
+import { ApolloServer } from 'apollo-server-express';
+import { ApolloServerPluginInlineTrace } from 'apollo-server-core';
+import { createClient } from '@supabase/supabase-js';
+import { schema } from './schema';
+import prisma from './prisma';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
+  process.env.SUPABASE_SERVICE_KEY,
 );
 
 const createApolloServer = () => {
@@ -34,4 +34,5 @@ const createApolloServer = () => {
   return server;
 };
 
-module.exports.createApolloServer = createApolloServer;
+const _createApolloServer = createApolloServer;
+export { _createApolloServer as createApolloServer };

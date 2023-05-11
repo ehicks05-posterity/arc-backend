@@ -1,4 +1,4 @@
-const {
+import {
   objectType,
   queryField,
   mutationField,
@@ -7,11 +7,11 @@ const {
   inputObjectType,
   enumType,
   stringArg,
-} = require("nexus");
-const { User, UserPostVote, UserCommentVote } = require("nexus-prisma");
-const { z } = require("zod");
+} from 'nexus';
+import { User, UserPostVote, UserCommentVote } from 'nexus-prisma';
+import { z } from 'zod';
 
-module.exports.User = objectType({
+const _User = objectType({
   name: User.$name,
   description: User.$description,
   definition(t) {
@@ -24,8 +24,9 @@ module.exports.User = objectType({
     t.field(User.commentVotes);
   },
 });
+export { _User as User };
 
-module.exports.UserPostVote = objectType({
+const _UserPostVote = objectType({
   name: UserPostVote.$name,
   description: UserPostVote.$description,
   definition(t) {
@@ -38,8 +39,9 @@ module.exports.UserPostVote = objectType({
     t.field(UserPostVote.updatedAt);
   },
 });
+export { _UserPostVote as UserPostVote };
 
-module.exports.UserCommentVote = objectType({
+const _UserCommentVote = objectType({
   name: UserCommentVote.$name,
   description: UserCommentVote.$description,
   definition(t) {
@@ -52,29 +54,30 @@ module.exports.UserCommentVote = objectType({
     t.field(UserCommentVote.updatedAt);
   },
 });
+export { _UserCommentVote as UserCommentVote };
 
-const DIRECTIONS = ["UP", "DOWN"];
+const DIRECTIONS = ['UP', 'DOWN'];
 const DIRECTION_TO_VALUE = { UP: 1, DOWN: -1 };
 
-module.exports.Direction = enumType({
-  name: "Direction",
+export const Direction = enumType({
+  name: 'Direction',
   members: DIRECTIONS,
 });
 
-module.exports.createUserPostVoteInput = inputObjectType({
-  name: "createUserPostVoteInput",
+export const createUserPostVoteInput = inputObjectType({
+  name: 'createUserPostVoteInput',
   definition(t) {
-    t.string("postId");
-    t.nonNull.field("direction", { type: "Direction" });
+    t.string('postId');
+    t.nonNull.field('direction', { type: 'Direction' });
   },
 });
 
-module.exports.createUserPostVote = mutationField("createUserPostVote", {
-  type: "Post",
+export const createUserPostVote = mutationField('createUserPostVote', {
+  type: 'Post',
   args: { input: this.createUserPostVoteInput },
   async resolve(_, args, ctx) {
     const userId = ctx.user?.id;
-    if (!userId) throw new Error("userId is required");
+    if (!userId) throw new Error('userId is required');
 
     const { postId, direction: directionArg } = args.input;
     const direction = DIRECTION_TO_VALUE[directionArg];
@@ -93,12 +96,12 @@ module.exports.createUserPostVote = mutationField("createUserPostVote", {
   },
 });
 
-module.exports.deleteUserPostVote = mutationField("deleteUserPostVote", {
-  type: "Post",
+export const deleteUserPostVote = mutationField('deleteUserPostVote', {
+  type: 'Post',
   args: { postId: idArg() },
   async resolve(_, args, ctx) {
     const userId = ctx.user?.id;
-    if (!userId) throw new Error("userId is required");
+    if (!userId) throw new Error('userId is required');
 
     const { postId } = args;
 
@@ -114,20 +117,20 @@ module.exports.deleteUserPostVote = mutationField("deleteUserPostVote", {
   },
 });
 
-module.exports.createUserCommentVoteInput = inputObjectType({
-  name: "createUserCommentVoteInput",
+export const createUserCommentVoteInput = inputObjectType({
+  name: 'createUserCommentVoteInput',
   definition(t) {
-    t.string("commentId");
-    t.nonNull.field("direction", { type: "Direction" });
+    t.string('commentId');
+    t.nonNull.field('direction', { type: 'Direction' });
   },
 });
 
-module.exports.createUserCommentVote = mutationField("createUserCommentVote", {
-  type: "Comment",
+export const createUserCommentVote = mutationField('createUserCommentVote', {
+  type: 'Comment',
   args: { input: this.createUserCommentVoteInput },
   async resolve(_, args, ctx) {
     const userId = ctx.user?.id;
-    if (!userId) throw new Error("userId is required");
+    if (!userId) throw new Error('userId is required');
 
     const { commentId, direction: directionArg } = args.input;
     const direction = DIRECTION_TO_VALUE[directionArg];
@@ -146,12 +149,12 @@ module.exports.createUserCommentVote = mutationField("createUserCommentVote", {
   },
 });
 
-module.exports.deleteUserCommentVote = mutationField("deleteUserCommentVote", {
-  type: "Comment",
+export const deleteUserCommentVote = mutationField('deleteUserCommentVote', {
+  type: 'Comment',
   args: { commentId: idArg() },
   async resolve(_, args, ctx) {
     const userId = ctx.user?.id;
-    if (!userId) throw new Error("userId is required");
+    if (!userId) throw new Error('userId is required');
 
     const { commentId } = args;
     const query = {
@@ -166,17 +169,17 @@ module.exports.deleteUserCommentVote = mutationField("deleteUserCommentVote", {
   },
 });
 
-module.exports.getUsers = queryField("getUsers", {
-  type: list("User"),
+export const getUsers = queryField('getUsers', {
+  type: list('User'),
   resolve(_root, _args, ctx) {
     return ctx.prisma.user.findMany({
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
   },
 });
 
-module.exports.getUser = queryField("getUser", {
-  type: "User",
+export const getUser = queryField('getUser', {
+  type: 'User',
   args: { id: idArg() },
   resolve(_, args, ctx) {
     return ctx.prisma.user.findUnique({
@@ -185,8 +188,8 @@ module.exports.getUser = queryField("getUser", {
   },
 });
 
-module.exports.getMe = queryField("getMe", {
-  type: "User",
+export const getMe = queryField('getMe', {
+  type: 'User',
   resolve(_, _args, ctx) {
     const { user } = ctx;
     return ctx.prisma.user.findUnique({
@@ -195,14 +198,14 @@ module.exports.getMe = queryField("getMe", {
   },
 });
 
-module.exports.setUsername = mutationField("setUsername", {
-  type: "String",
+export const setUsername = mutationField('setUsername', {
+  type: 'String',
   args: { username: stringArg() },
   async resolve(_, args, ctx) {
     const { username } = args;
     const { user } = ctx;
 
-    if (!user) throw new Error("Not authenticated");
+    if (!user) throw new Error('Not authenticated');
 
     // does user have a username?
     const currentUsername = await ctx.prisma.$queryRaw`
@@ -210,7 +213,7 @@ module.exports.setUsername = mutationField("setUsername", {
         from auth.users where id = '${user.id}';
     `;
     if (currentUsername?.[0].username)
-      throw new Error("user already has a username");
+      throw new Error('user already has a username');
 
     // validate length and characters
     const usernameSchema = z
@@ -228,7 +231,7 @@ module.exports.setUsername = mutationField("setUsername", {
       select raw_app_meta_data ->> 'username' 
         from auth.users where raw_app_meta_data->>'username' = '${username}';
     `;
-    if (usernameExists.length !== 0) throw new Error("username already exists");
+    if (usernameExists.length !== 0) throw new Error('username already exists');
 
     await ctx.prisma.$queryRaw`
       update auth.users 
@@ -238,12 +241,12 @@ module.exports.setUsername = mutationField("setUsername", {
 
     await ctx.prisma.user.create({ data: { username } });
 
-    return "ok";
+    return 'ok';
   },
 });
 
-module.exports.deleteUser = mutationField("deleteUser", {
-  type: "User",
+export const deleteUser = mutationField('deleteUser', {
+  type: 'User',
   args: { id: idArg() },
   resolve(_, args, ctx) {
     return ctx.prisma.user.update({
