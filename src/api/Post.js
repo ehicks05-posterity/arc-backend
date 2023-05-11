@@ -9,7 +9,7 @@ import {
   nonNull,
 } from 'nexus';
 import { Post } from 'nexus-prisma';
-import { adminSeed, adminNuke } from './utils';
+import { adminSeed as _adminSeed, adminNuke as _adminNuke } from './utils';
 
 const SORTS = ['HOT', 'TOP', 'NEW'];
 export const Sort = enumType({
@@ -147,21 +147,19 @@ export const createPost = mutationField('createPost', {
   },
 });
 
-const _adminSeed = mutationField('adminSeed', {
+export const adminSeed = mutationField('adminSeed', {
   type: list('Post'),
-  resolve() {
-    return adminSeed();
+  async resolve() {
+    return _adminSeed();
   },
 });
-export { _adminSeed as adminSeed };
 
-const _adminNuke = mutationField('adminNuke', {
+export const adminNuke = mutationField('adminNuke', {
   type: 'Post',
-  resolve() {
-    return adminNuke();
+  async resolve() {
+    return _adminNuke();
   },
 });
-export { _adminNuke as adminNuke };
 
 export const updatePostInput = inputObjectType({
   name: 'updatePostInput',
