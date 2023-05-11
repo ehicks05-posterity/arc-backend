@@ -17,11 +17,11 @@ const _Comment = objectType({
     t.nonNull.field(Comment.deleted);
     t.nonNull.field(Comment.level);
     t.nonNull.field(Comment.author);
-    t.nonNull.string('authorId');
+    t.nonNull.field(Comment.authorId);
     t.nonNull.field(Comment.post);
-    t.nonNull.string('postId');
+    t.nonNull.field(Comment.postId);
     t.field(Comment.parentComment);
-    t.string('parentCommentId');
+    t.field(Comment.parentCommentId);
     t.nonNull.field(Comment.comments);
     t.nonNull.field(Comment.score);
     t.nonNull.field(Comment.createdAt);
