@@ -2,7 +2,7 @@ import { scheduleJob } from 'node-schedule';
 import prisma from './prisma';
 
 // every 2 minutes
-const CRON = '*/2 * * * *';
+const CRON = '*/30 * * * *';
 
 export function scheduleUpdateScoresProcedure() {
   return scheduleJob(CRON, async () => {
