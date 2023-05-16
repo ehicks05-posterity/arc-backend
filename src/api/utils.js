@@ -10,7 +10,7 @@ export const adminNuke = async () => {
   await prisma.user.deleteMany();
 };
 
-const POST_COUNT = 30;
+const POST_COUNT = 80;
 const USER_COUNT = 100;
 const MAX_COMMENTS_PER_POST = 50;
 const MAX_VOTES_PER_POST = USER_COUNT;
