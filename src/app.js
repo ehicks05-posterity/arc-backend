@@ -7,7 +7,7 @@ import express, { urlencoded, json } from 'express';
 import cors from 'cors';
 import jwt from 'express-jwt';
 import { createApolloServer } from './apollo';
-import { $executeRaw, user as _user } from './prisma';
+import prisma from './prisma';
 
 import { scheduleUpdateScoresProcedure } from './tasks';
 
@@ -48,7 +48,7 @@ app.get('/test', checkJwt, async (req, res) => {
 
 app.get('/me', checkJwt, async (req, res) => {
   const authUser =
-    await $executeRaw`select * from auth.users where id = ${req?.user.id};`;
+    await prisma.$executeRaw`select * from auth.users where id = ${req?.user.id};`;
   res.json({
     message: 'Hello! This is an authenticated route.',
     user: req.user,
@@ -59,13 +59,13 @@ app.get('/me', checkJwt, async (req, res) => {
 app.use(checkJwt, async (req, res, next) => {
   const username = req.user?.app_metadata?.username;
   if (username) {
-    const user = await _user.findUnique({ where: { id: username } });
+    const user = await prisma.user.findUnique({ where: { id: username } });
     if (!user) {
       console.log(req.user);
       console.log(
         `incoming user ${username} is missing from public.users. creating...`,
       );
-      await _user.create({ data: { id: username } });
+      await prisma.user.create({ data: { id: username } });
     }
   }
   next();
