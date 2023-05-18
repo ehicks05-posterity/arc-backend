@@ -12,7 +12,7 @@ const supabase = createClient(
 const createApolloServer = () => {
   const server = new ApolloServer({
     schema,
-    context: ({ req }) => {
+    context: ({ req }: any) => {
       const user = req.user
         ? {
             ...req.user,
