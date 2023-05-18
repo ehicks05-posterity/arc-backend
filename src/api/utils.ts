@@ -1,5 +1,6 @@
 import { sample, sampleSize } from 'lodash';
 import { faker } from '@faker-js/faker';
+import { Comment } from '@prisma/client';
 import prisma from '../prisma';
 
 export const adminNuke = async () => {
@@ -35,14 +36,14 @@ export const adminSeed = async () => {
       title: faker.hacker.phrase(),
       content: faker.lorem.paragraphs(),
       link: 'https://www.google.com',
-      authorId: sample(users).id,
+      authorId: sample(users)?.id,
     })),
   });
   const posts = await prisma.post.findMany();
 
   console.log('for each post, creating comments...');
   const commentPromises = posts.map(async p => {
-    const comments = [];
+    const comments: Comment[] = [];
     const commentCount = Math.random() * MAX_COMMENTS_PER_POST;
     while (comments.length < commentCount) {
       // aim for 25% to be roots, 75% to be children
@@ -52,7 +53,7 @@ export const adminSeed = async () => {
         data: {
           content: faker.lorem.paragraphs(Math.round(Math.random() * 10)),
           postId: p.id,
-          authorId: sample(users).id,
+          authorId: sample(users)?.id,
           parentCommentId: parent?.id,
           level: parent ? parent.level + 1 : 0,
         },

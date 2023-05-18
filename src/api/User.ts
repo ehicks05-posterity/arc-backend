@@ -7,6 +7,7 @@ import {
   inputObjectType,
   enumType,
   stringArg,
+  nonNull,
 } from 'nexus';
 import { User, UserPostVote, UserCommentVote } from 'nexus-prisma';
 import { z } from 'zod';
@@ -67,14 +68,14 @@ export const Direction = enumType({
 export const createUserPostVoteInput = inputObjectType({
   name: 'createUserPostVoteInput',
   definition(t) {
-    t.string('postId');
+    t.nonNull.string('postId');
     t.nonNull.field('direction', { type: 'Direction' });
   },
 });
 
 export const createUserPostVote = mutationField('createUserPostVote', {
   type: 'Post',
-  args: { input: this.createUserPostVoteInput },
+  args: { input: nonNull(createUserPostVoteInput) },
   async resolve(_, args, ctx) {
     const userId = ctx.user?.id;
     if (!userId) throw new Error('userId is required');
@@ -120,14 +121,14 @@ export const deleteUserPostVote = mutationField('deleteUserPostVote', {
 export const createUserCommentVoteInput = inputObjectType({
   name: 'createUserCommentVoteInput',
   definition(t) {
-    t.string('commentId');
+    t.nonNull.string('commentId');
     t.nonNull.field('direction', { type: 'Direction' });
   },
 });
 
 export const createUserCommentVote = mutationField('createUserCommentVote', {
   type: 'Comment',
-  args: { input: this.createUserCommentVoteInput },
+  args: { input: nonNull(createUserCommentVoteInput) },
   async resolve(_, args, ctx) {
     const userId = ctx.user?.id;
     if (!userId) throw new Error('userId is required');

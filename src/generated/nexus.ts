@@ -40,12 +40,12 @@ export interface NexusGenInputs {
     title: string; // String!
   }
   createUserCommentVoteInput: { // input type
-    commentId?: string | null; // String
+    commentId: string; // String!
     direction: NexusGenEnums['Direction']; // Direction!
   }
   createUserPostVoteInput: { // input type
     direction: NexusGenEnums['Direction']; // Direction!
-    postId?: string | null; // String
+    postId: string; // String!
   }
   updateCommentInput: { // input type
     content: string; // String!
@@ -316,10 +316,10 @@ export interface NexusGenArgTypes {
       input?: NexusGenInputs['createPostInput'] | null; // createPostInput
     }
     createUserCommentVote: { // args
-      input?: NexusGenInputs['createUserCommentVoteInput'] | null; // createUserCommentVoteInput
+      input: NexusGenInputs['createUserCommentVoteInput']; // createUserCommentVoteInput!
     }
     createUserPostVote: { // args
-      input?: NexusGenInputs['createUserPostVoteInput'] | null; // createUserPostVoteInput
+      input: NexusGenInputs['createUserPostVoteInput']; // createUserPostVoteInput!
     }
     deleteComment: { // args
       id?: string | null; // ID

@@ -42,8 +42,8 @@ type Mutation {
   adminSeed: [Post]
   createComment(input: createCommentInput): Comment
   createPost(input: createPostInput): Post
-  createUserCommentVote(input: createUserCommentVoteInput): Comment
-  createUserPostVote(input: createUserPostVoteInput): Post
+  createUserCommentVote(input: createUserCommentVoteInput!): Comment
+  createUserPostVote(input: createUserPostVoteInput!): Post
   deleteComment(id: ID): Comment
   deletePost(id: ID): Post
   deleteUser(id: ID): User
@@ -134,13 +134,13 @@ input createPostInput {
 }
 
 input createUserCommentVoteInput {
-  commentId: String
+  commentId: String!
   direction: Direction!
 }
 
 input createUserPostVoteInput {
   direction: Direction!
-  postId: String
+  postId: String!
 }
 
 input updateCommentInput {
