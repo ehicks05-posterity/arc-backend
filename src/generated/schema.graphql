@@ -38,10 +38,10 @@ enum Direction {
 }
 
 type Mutation {
-  adminNuke: Post
-  adminSeed: [Post]
-  createComment(input: createCommentInput): Comment
-  createPost(input: createPostInput): Post
+  adminNuke: String
+  adminSeed: String
+  createComment(input: createCommentInput!): Comment
+  createPost(input: createPostInput!): Post
   createUserCommentVote(input: createUserCommentVoteInput!): Comment
   createUserPostVote(input: createUserPostVoteInput!): Post
   deleteComment(id: ID): Comment
@@ -50,8 +50,8 @@ type Mutation {
   deleteUserCommentVote(commentId: ID): Comment
   deleteUserPostVote(postId: ID): Post
   setUsername(username: String): String
-  updateComment(input: updateCommentInput): Comment
-  updatePost(input: updatePostInput): Post
+  updateComment(input: updateCommentInput!): Comment
+  updatePost(input: updatePostInput!): Post
 }
 
 type Post {
@@ -121,7 +121,7 @@ type UserPostVote {
 }
 
 input createCommentInput {
-  content: String
+  content: String!
   level: Int
   parentCommentId: String
   postId: String!

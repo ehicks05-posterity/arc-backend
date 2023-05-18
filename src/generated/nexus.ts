@@ -29,7 +29,7 @@ declare global {
 
 export interface NexusGenInputs {
   createCommentInput: { // input type
-    content?: string | null; // String
+    content: string; // String!
     level?: number | null; // Int
     parentCommentId?: string | null; // String
     postId: string; // String!
@@ -149,8 +149,8 @@ export interface NexusGenFieldTypes {
     userVote: NexusGenRootTypes['UserCommentVote'] | null; // UserCommentVote
   }
   Mutation: { // field return type
-    adminNuke: NexusGenRootTypes['Post'] | null; // Post
-    adminSeed: Array<NexusGenRootTypes['Post'] | null> | null; // [Post]
+    adminNuke: string | null; // String
+    adminSeed: string | null; // String
     createComment: NexusGenRootTypes['Comment'] | null; // Comment
     createPost: NexusGenRootTypes['Post'] | null; // Post
     createUserCommentVote: NexusGenRootTypes['Comment'] | null; // Comment
@@ -238,8 +238,8 @@ export interface NexusGenFieldTypeNames {
     userVote: 'UserCommentVote'
   }
   Mutation: { // field return type name
-    adminNuke: 'Post'
-    adminSeed: 'Post'
+    adminNuke: 'String'
+    adminSeed: 'String'
     createComment: 'Comment'
     createPost: 'Post'
     createUserCommentVote: 'Comment'
@@ -310,10 +310,10 @@ export interface NexusGenFieldTypeNames {
 export interface NexusGenArgTypes {
   Mutation: {
     createComment: { // args
-      input?: NexusGenInputs['createCommentInput'] | null; // createCommentInput
+      input: NexusGenInputs['createCommentInput']; // createCommentInput!
     }
     createPost: { // args
-      input?: NexusGenInputs['createPostInput'] | null; // createPostInput
+      input: NexusGenInputs['createPostInput']; // createPostInput!
     }
     createUserCommentVote: { // args
       input: NexusGenInputs['createUserCommentVoteInput']; // createUserCommentVoteInput!
@@ -340,10 +340,10 @@ export interface NexusGenArgTypes {
       username?: string | null; // String
     }
     updateComment: { // args
-      input?: NexusGenInputs['updateCommentInput'] | null; // updateCommentInput
+      input: NexusGenInputs['updateCommentInput']; // updateCommentInput!
     }
     updatePost: { // args
-      input?: NexusGenInputs['updatePostInput'] | null; // updatePostInput
+      input: NexusGenInputs['updatePostInput']; // updatePostInput!
     }
   }
   Post: {

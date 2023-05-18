@@ -5,6 +5,7 @@ import {
   list,
   idArg,
   inputObjectType,
+  nonNull,
 } from 'nexus';
 import { Comment } from 'nexus-prisma';
 
@@ -74,13 +75,13 @@ export const createCommentInput = inputObjectType({
     t.nonNull.string('postId');
     t.string('parentCommentId');
     t.int('level');
-    t.string('content');
+    t.nonNull.string('content');
   },
 });
 
 export const createComment = mutationField('createComment', {
   type: 'Comment',
-  args: { input: this.createCommentInput },
+  args: { input: nonNull(createCommentInput) },
   resolve(_, args, ctx) {
     const authorId = ctx.user?.id;
     if (!authorId) throw new Error('Author is required');
@@ -109,7 +110,7 @@ export const updateCommentInput = inputObjectType({
 
 export const updateComment = mutationField('updateComment', {
   type: 'Comment',
-  args: { input: this.updateCommentInput },
+  args: { input: nonNull(updateCommentInput) },
   async resolve(_, args, ctx) {
     const userId = ctx.user?.id;
     if (!userId) throw new Error('userId is required');
