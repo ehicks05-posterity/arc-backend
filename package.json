@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate": "npx prisma generate",
-    "dev": "set NODE_ENV=development&&ts-node-dev --transpile-only --no-notify src/app.js",
+    "dev": "set NODE_ENV=development&&ts-node-dev --transpile-only --no-notify src/app.ts",
     "build": "tsc",
-    "start": "set NODE_ENV=production&&node ./dist/src/app.js"
+    "start": "set NODE_ENV=production&&node ./dist/src/app.ts"
   },
   "author": "",
   "license": "ISC",
@@ -21,7 +21,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "express-jwt": "^6.1.0",
+    "express-jwt": "^8.4.1",
     "express-jwt-authz": "^2.4.1",
     "graphql": "^16.6.0",
     "graphql-scalars": "^1.21.3",
@@ -37,6 +37,7 @@
   "devDependencies": {
     "@ehicks05/eslint-config": "^0.1.5",
     "@types/lodash": "^4.14.194",
+    "@types/morgan": "^1.9.4",
     "@types/node": "^20.1.0",
     "@types/node-schedule": "^2.1.0",
     "prisma": "^4.13.0",

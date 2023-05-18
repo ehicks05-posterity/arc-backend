@@ -5,7 +5,7 @@ dotenv.config();
 import morgan from 'morgan';
 import express, { urlencoded, json } from 'express';
 import cors from 'cors';
-import jwt from 'express-jwt';
+import { expressjwt as jwt } from 'express-jwt';
 import { createApolloServer } from './apollo';
 import prisma from './prisma';
 
@@ -16,7 +16,7 @@ app.use(cors({ origin: ['https://arc.ehicks.net', 'http://localhost:3000'] }));
 
 // AUTH
 const checkJwt = jwt({
-  secret: process.env.SUPABASE_JWT_SECRET,
+  secret: process.env.SUPABASE_JWT_SECRET || '',
   credentialsRequired: false,
   audience: 'authenticated',
   algorithms: ['HS256'],
@@ -48,7 +48,7 @@ app.get('/test', checkJwt, async (req, res) => {
 
 app.get('/me', checkJwt, async (req, res) => {
   const authUser =
-    await prisma.$executeRaw`select * from auth.users where id = ${req?.user.id};`;
+    await prisma.$executeRaw`select * from auth.users where id = ${req?.user?.id};`;
   res.json({
     message: 'Hello! This is an authenticated route.',
     user: req.user,
@@ -65,7 +65,7 @@ app.use(checkJwt, async (req, res, next) => {
       console.log(
         `incoming user ${username} is missing from public.users. creating...`,
       );
-      await prisma.user.create({ data: { id: username } });
+      await prisma.user.create({ data: { id: username, username: '' } });
     }
   }
   next();
@@ -80,9 +80,7 @@ async function startApolloServer() {
   const apolloServer = createApolloServer();
   await apolloServer.start();
   apolloServer.applyMiddleware({ app });
-  await new Promise(resolve => {
-    app.listen({ port }, resolve);
-  });
+  app.listen({ port });
   console.log(
     `🚀 Server ready at http://localhost:${port}${apolloServer.graphqlPath}`,
   );
