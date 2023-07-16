@@ -25,48 +25,53 @@ model User {
 }
 
 model Post {
-  id        String         @id @default(uuid())
-  title     String
-  content   String
-  link      String
-  deleted   Boolean        @default(false)
-  createdAt DateTime       @default(now()) @db.Timestamptz
-  updatedAt DateTime       @updatedAt @db.Timestamptz
-  author    User?          @relation(fields: [authorId], references: [id])
+  id        String   @id @default(uuid())
   authorId  String?
-  comments  Comment[]
-  votes     UserPostVote[]
-  score     Float          @default(0)
+  content   String
+  deleted   Boolean  @default(false)
+  score     Float    @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  author   User?          @relation(fields: [authorId], references: [id])
+  comments Comment[]
+  votes    UserPostVote[]
+
+  // unique to posts
+  title String
+  link  String
 }
 
 model Comment {
-  id              String            @id @default(uuid())
-  content         String
-  deleted         Boolean           @default(false)
-  level           Int               @default(0)
-  createdAt       DateTime          @default(now()) @db.Timestamptz
-  updatedAt       DateTime          @updatedAt @db.Timestamptz
-  post            Post              @relation(fields: [postId], references: [id])
+  id        String   @id @default(uuid())
+  authorId  String?
+  content   String
+  deleted   Boolean  @default(false)
+  score     Float    @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  author   User?             @relation(fields: [authorId], references: [id])
+  comments Comment[]         @relation("CommentToComment")
+  votes    UserCommentVote[]
+
+  // unique to comments
+  post            Post     @relation(fields: [postId], references: [id])
   postId          String
-  parentComment   Comment?          @relation("CommentToComment", fields: [parentCommentId], references: [id])
+  parentComment   Comment? @relation("CommentToComment", fields: [parentCommentId], references: [id])
   parentCommentId String?
-  author          User?             @relation(fields: [authorId], references: [id])
-  authorId        String?
-  comments        Comment[]         @relation("CommentToComment")
-  votes           UserCommentVote[]
-  score           Float             @default(0)
+  level           Int      @default(0)
 }
 
 model UserPostVote {
-  userId String
-  postId String
-
-  user User @relation(fields: [userId], references: [id])
-  post Post @relation(fields: [postId], references: [id])
-
+  userId    String
+  postId    String
   direction Int      @default(0)
   createdAt DateTime @default(now()) @db.Timestamptz
   updatedAt DateTime @updatedAt @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
 
   @@id([userId, postId])
 }
@@ -74,13 +79,12 @@ model UserPostVote {
 model UserCommentVote {
   userId    String
   commentId String
-
-  user    User    @relation(fields: [userId], references: [id])
-  comment Comment @relation(fields: [commentId], references: [id])
-
   direction Int      @default(0)
   createdAt DateTime @default(now()) @db.Timestamptz
   updatedAt DateTime @updatedAt @db.Timestamptz
+
+  user    User    @relation(fields: [userId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id])
 
   @@id([userId, commentId])
 }
