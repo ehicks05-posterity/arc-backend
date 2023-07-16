@@ -13,11 +13,12 @@ const createApolloServer = () => {
   const server = new ApolloServer({
     schema,
     context: ({ req }: any) => {
-      const user = req.user
+      console.log({ auth: req.auth });
+      const user = req.auth
         ? {
-            ...req.user,
-            id: req.user.app_metadata.username,
-            authId: req.user.sub,
+            ...req.auth,
+            id: req.auth.app_metadata.username,
+            authId: req.auth.sub,
           }
         : undefined;
 
