@@ -102,6 +102,7 @@ export interface NexusGenObjects {
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: string; // ID!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    username: string; // String!
   }
   UserCommentVote: { // root type
     commentId: string; // String!
@@ -197,6 +198,7 @@ export interface NexusGenFieldTypes {
     postVotes: NexusGenRootTypes['UserPostVote'][]; // [UserPostVote!]!
     posts: NexusGenRootTypes['Post'][]; // [Post!]!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    username: string; // String!
   }
   UserCommentVote: { // field return type
     comment: NexusGenRootTypes['Comment']; // Comment!
@@ -286,6 +288,7 @@ export interface NexusGenFieldTypeNames {
     postVotes: 'UserPostVote'
     posts: 'Post'
     updatedAt: 'DateTime'
+    username: 'String'
   }
   UserCommentVote: { // field return type name
     comment: 'Comment'

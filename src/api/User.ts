@@ -17,6 +17,7 @@ const _User = objectType({
   description: User.$description,
   definition(t) {
     t.field(User.id);
+    t.field(User.username);
     t.field(User.createdAt);
     t.field(User.updatedAt);
     t.field(User.posts);
