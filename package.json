@@ -29,7 +29,7 @@
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "nexus": "^1.3.0",
-    "nexus-prisma": "^1.0.5",
+    "nexus-prisma": "^1.0.9",
     "node-schedule": "^2.1.1",
     "pg": "^8.10.0",
     "zod": "^3.21.4"
