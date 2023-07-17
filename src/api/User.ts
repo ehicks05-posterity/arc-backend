@@ -11,6 +11,7 @@ import {
 } from 'nexus';
 import { User, UserPostVote, UserCommentVote } from 'nexus-prisma';
 import { z } from 'zod';
+import prisma from '../prisma';
 
 const _User = objectType({
   name: User.$name,
@@ -204,18 +205,10 @@ export const setUsername = mutationField('setUsername', {
   type: 'String',
   args: { username: stringArg() },
   async resolve(_, args, ctx) {
-    const { username } = args;
+    const { username: usernameInput } = args;
     const { user } = ctx;
 
     if (!user) throw new Error('Not authenticated');
-
-    // does user have a username?
-    const currentUsername = await ctx.prisma.$queryRaw`
-      select raw_user_meta_data ->> 'username' as username
-        from auth.users where id::text = '${user.authId}';
-    `;
-    if (currentUsername?.[0]?.username)
-      throw new Error('user already has a username');
 
     // validate length and characters
     const usernameSchema = z
@@ -224,24 +217,22 @@ export const setUsername = mutationField('setUsername', {
       .min(3)
       .max(24);
 
-    const parsed = usernameSchema.safeParse(username);
+    const parsed = usernameSchema.safeParse(usernameInput);
     if (!parsed.success)
       throw new Error(JSON.parse(parsed.error.message)[0].message);
+    const username = parsed.data;
 
     // validate uniqueness
-    const usernameExists = await ctx.prisma.$queryRaw`
-      select raw_user_meta_data ->> 'username' 
-        from auth.users where raw_user_meta_data->>'username' = '${username}';
-    `;
-    if (usernameExists.length !== 0) throw new Error('username already exists');
+    const usernameExists = await prisma.user.count({
+      where: { username: { equals: username } },
+    });
+    if (usernameExists !== 0) throw new Error('username already exists');
 
-    await ctx.prisma.$queryRaw`
-      update auth.users 
-        set raw_user_meta_data = raw_user_meta_data || '{"username": "${username}"}'
-        where id::text = '${user.authId}';
-    `;
-
-    await ctx.prisma.user.create({ data: { username, id: user.authId } });
+    await prisma.user.upsert({
+      where: { id: user.id },
+      create: { id: user.id, username },
+      update: { username },
+    });
 
     return 'ok';
   },
