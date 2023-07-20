@@ -6,12 +6,15 @@ import {
   idArg,
   enumType,
   inputObjectType,
+  arg,
   nonNull,
+  intArg,
 } from 'nexus';
 import { Post } from 'nexus-prisma';
 import { adminSeed as _adminSeed, adminNuke as _adminNuke } from './utils';
+import prisma from '../prisma';
 
-const SORTS = ['HOT', 'TOP', 'NEW'];
+const SORTS = ['HOT', 'TOP', 'NEW'] as const;
 export const Sort = enumType({
   name: 'Sort',
   members: SORTS,
@@ -92,22 +95,31 @@ const _Post = objectType({
 });
 export { _Post as Post };
 
+// TODO: these are types & constants for POSTS query, consider breaking out
+type SortKey = (typeof SORTS)[number];
+type OrderByClause = Record<string, 'asc' | 'desc'>;
+
+const sortToOrderByClause: Record<SortKey, OrderByClause> = {
+  HOT: { score: 'desc' },
+  TOP: { netVotes: 'desc' },
+  NEW: { createdAt: 'desc' },
+};
+
+const PAGE_SIZE = 10;
+
 export const getPosts = queryField('getPosts', {
   type: nonNull(list(nonNull('Post'))),
-  args: { sort: 'Sort' },
-  resolve(_, args, ctx) {
-    const { sort } = args;
-    if (sort === 'HOT') {
-      return ctx.prisma.post.findMany({ orderBy: { score: 'desc' } });
-    }
-    if (sort === 'NEW') {
-      return ctx.prisma.post.findMany({ orderBy: { createdAt: 'desc' } });
-    }
-    if (sort === 'TOP') {
-      return ctx.prisma
-        .$queryRaw`select * from "Post" order by getNetVotes(id, "createdAt") desc;`;
-    }
-    return ctx.prisma.post.findMany({ orderBy: { score: 'desc' } });
+  args: {
+    sort: arg({ type: 'Sort', default: 'HOT' }),
+    offset: intArg(),
+  },
+  resolve(_, args) {
+    const { sort, offset } = args;
+    const skip = offset || 0;
+
+    const orderBy = sortToOrderByClause[sort || 'HOT'];
+
+    return prisma.post.findMany({ skip, take: PAGE_SIZE, orderBy });
   },
 });
 

@@ -362,7 +362,8 @@ export interface NexusGenArgTypes {
       id?: string | null; // ID
     }
     getPosts: { // args
-      sort?: NexusGenEnums['Sort'] | null; // Sort
+      offset?: number | null; // Int
+      sort: NexusGenEnums['Sort'] | null; // Sort
     }
     getUser: { // args
       id?: string | null; // ID
