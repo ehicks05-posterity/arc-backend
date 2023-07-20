@@ -11,9 +11,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// A User...
 model User {
-  /// username
   id           String            @id
   username     String
   createdAt    DateTime          @default(now()) @db.Timestamptz
@@ -29,6 +27,7 @@ model Post {
   authorId  String?
   content   String
   deleted   Boolean  @default(false)
+  netVotes  Int      @default(0)
   score     Float    @default(0)
   createdAt DateTime @default(now()) @db.Timestamptz
   updatedAt DateTime @updatedAt @db.Timestamptz
@@ -40,6 +39,10 @@ model Post {
   // unique to posts
   title String
   link  String
+
+  @@index([score])
+  @@index([netVotes])
+  @@index([createdAt])
 }
 
 model Comment {
@@ -47,6 +50,7 @@ model Comment {
   authorId  String?
   content   String
   deleted   Boolean  @default(false)
+  netVotes  Int      @default(0)
   score     Float    @default(0)
   createdAt DateTime @default(now()) @db.Timestamptz
   updatedAt DateTime @updatedAt @db.Timestamptz
