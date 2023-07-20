@@ -74,7 +74,7 @@ export interface NexusGenScalars {
 
 export interface NexusGenObjects {
   Comment: { // root type
-    authorId: string; // String!
+    authorId?: string | null; // String
     content: string; // String!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     deleted: boolean; // Boolean!
@@ -87,7 +87,7 @@ export interface NexusGenObjects {
   }
   Mutation: {};
   Post: { // root type
-    authorId: string; // String!
+    authorId?: string | null; // String
     content: string; // String!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     deleted: boolean; // Boolean!
@@ -132,8 +132,8 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnu
 
 export interface NexusGenFieldTypes {
   Comment: { // field return type
-    author: NexusGenRootTypes['User']; // User!
-    authorId: string; // String!
+    author: NexusGenRootTypes['User'] | null; // User
+    authorId: string | null; // String
     comments: NexusGenRootTypes['Comment'][]; // [Comment!]!
     content: string; // String!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -166,8 +166,8 @@ export interface NexusGenFieldTypes {
     updatePost: NexusGenRootTypes['Post'] | null; // Post
   }
   Post: { // field return type
-    author: NexusGenRootTypes['User']; // User!
-    authorId: string; // String!
+    author: NexusGenRootTypes['User'] | null; // User
+    authorId: string | null; // String
     commentCount: number; // Int!
     comments: NexusGenRootTypes['Comment'][]; // [Comment!]!
     content: string; // String!

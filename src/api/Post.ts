@@ -32,8 +32,8 @@ const _Post = objectType({
     t.nonNull.field(Post.link);
     t.nonNull.field(Post.content);
     t.nonNull.field(Post.deleted);
-    t.nonNull.field(Post.author);
-    t.nonNull.field(Post.authorId);
+    t.field(Post.author);
+    t.field(Post.authorId);
     t.nonNull.field(Post.comments);
     t.nonNull.list.nonNull.field('comments', {
       type: 'Comment',

@@ -3,8 +3,8 @@
 
 
 type Comment {
-  author: User!
-  authorId: String!
+  author: User
+  authorId: String
   comments: [Comment!]!
   content: String!
   createdAt: DateTime!
@@ -55,8 +55,8 @@ type Mutation {
 }
 
 type Post {
-  author: User!
-  authorId: String!
+  author: User
+  authorId: String
   commentCount: Int!
   comments(commentSort: CommentSort): [Comment!]!
   content: String!

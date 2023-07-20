@@ -17,8 +17,8 @@ const _Comment = objectType({
     t.nonNull.field(Comment.content);
     t.nonNull.field(Comment.deleted);
     t.nonNull.field(Comment.level);
-    t.nonNull.field(Comment.author);
-    t.nonNull.field(Comment.authorId);
+    t.field(Comment.author);
+    t.field(Comment.authorId);
     t.nonNull.field(Comment.post);
     t.nonNull.field(Comment.postId);
     t.field(Comment.parentComment);
