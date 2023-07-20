@@ -9,7 +9,7 @@ import { expressjwt as jwt } from 'express-jwt';
 import { createApolloServer } from './apollo';
 import prisma from './prisma';
 
-// import { scheduleUpdateScoresProcedure } from './tasks';
+import { scheduleUpdateScoresProcedure } from './tasks';
 
 const app = express();
 app.use(cors({ origin: ['https://arc.ehicks.net', 'http://localhost:3000'] }));
@@ -85,7 +85,7 @@ async function startApolloServer() {
     `🚀 Server ready at http://localhost:${port}${apolloServer.graphqlPath}`,
   );
 
-  // scheduleUpdateScoresProcedure();
+  scheduleUpdateScoresProcedure();
 }
 
 startApolloServer();
