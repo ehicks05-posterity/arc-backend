@@ -67,9 +67,9 @@ create trigger on_auth_user_created_for_arc
   after insert on auth.users
   for each row execute procedure arc.handle_new_user();
 
--- select cron.schedule (
---     'update-scores', -- name of the cron job
---     '* * * * *', -- every minute
+select cron.schedule (
+    'update-scores', -- name of the cron job
+    '* * * * *', -- every minute
 
---     $$ call arc.updatescore(); $$
--- );
+    $$ call arc.updatescore(); $$
+);
