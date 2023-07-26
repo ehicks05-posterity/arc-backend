@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION arc.getAgeInHours(dt timestamptz) RETURNS integer AS 
 $$ LANGUAGE plpgsql;
 
 -- CreateFunction
-CREATE OR REPLACE FUNCTION arc.getNetVotes(id text, createdAt timestamptz) RETURNS integer AS $$
+CREATE OR REPLACE FUNCTION arc.getNetVotes(id text) RETURNS integer AS $$
 	DECLARE
 		netVotes integer = 0;
 	BEGIN
@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION arc.getNetVotes(id text, createdAt timestamptz) RETUR
 $$ LANGUAGE plpgsql;
 
 -- CreateFunction
-CREATE OR REPLACE FUNCTION arc.getCommentNetVotes(id text, createdAt timestamptz) RETURNS integer AS $$
+CREATE OR REPLACE FUNCTION arc.getCommentNetVotes(id text) RETURNS integer AS $$
 	DECLARE
 		netVotes integer = 0;
 	BEGIN
@@ -28,14 +28,14 @@ $$ LANGUAGE plpgsql;
 -- CreateFunction
 CREATE OR REPLACE FUNCTION arc.getScore(id text, createdAt timestamptz) RETURNS real AS $$
 	BEGIN
-		RETURN arc.getNetVotes(id, createdAt) / ((arc.getAgeInHours(createdAt) + 2) ^ 1.5);
+		RETURN arc.getNetVotes(id) / ((arc.getAgeInHours(createdAt) + 2) ^ 1.5);
 	END;
 $$ LANGUAGE plpgsql;
 
 -- CreateFunction
 CREATE OR REPLACE FUNCTION arc.getCommentScore(id text, createdAt timestamptz) RETURNS real AS $$
 	BEGIN
-		RETURN arc.getCommentNetVotes(id, createdAt) / ((arc.getAgeInHours(createdAt) + 2) ^ 1.5);
+		RETURN arc.getCommentNetVotes(id) / ((arc.getAgeInHours(createdAt) + 2) ^ 1.5);
 	END;
 $$ LANGUAGE plpgsql;
 
