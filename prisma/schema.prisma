@@ -12,25 +12,28 @@ datasource db {
 }
 
 model User {
-  id           String            @id
-  username     String
-  createdAt    DateTime          @default(now()) @db.Timestamptz
-  updatedAt    DateTime          @updatedAt @db.Timestamptz
+  id        String   @id
+  username  String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
   posts        Post[]
   comments     Comment[]
   postVotes    UserPostVote[]
   commentVotes UserCommentVote[]
+
+  @@map("user")
 }
 
 model Post {
   id        String   @id @default(uuid())
-  authorId  String?
+  authorId  String?  @map("author_id")
   content   String
   deleted   Boolean  @default(false)
-  netVotes  Int      @default(0)
+  netVotes  Int      @default(0) @map("net_votes")
   score     Float    @default(0)
-  createdAt DateTime @default(now()) @db.Timestamptz
-  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
   author   User?          @relation(fields: [authorId], references: [id])
   comments Comment[]
@@ -43,6 +46,7 @@ model Post {
   @@index([score])
   @@index([netVotes])
   @@index([createdAt])
+  @@map("post")
 }
 
 model Comment {
@@ -50,45 +54,50 @@ model Comment {
   authorId  String?
   content   String
   deleted   Boolean  @default(false)
-  netVotes  Int      @default(0)
+  netVotes  Int      @default(0) @map("net_votes")
   score     Float    @default(0)
-  createdAt DateTime @default(now()) @db.Timestamptz
-  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
   author   User?             @relation(fields: [authorId], references: [id])
   comments Comment[]         @relation("CommentToComment")
   votes    UserCommentVote[]
 
   // unique to comments
-  post            Post     @relation(fields: [postId], references: [id])
-  postId          String
-  parentComment   Comment? @relation("CommentToComment", fields: [parentCommentId], references: [id])
-  parentCommentId String?
-  level           Int      @default(0)
+  postId          String  @map("post_id")
+  parentCommentId String? @map("parent_comment_id")
+  level           Int     @default(0)
+
+  post          Post     @relation(fields: [postId], references: [id])
+  parentComment Comment? @relation("CommentToComment", fields: [parentCommentId], references: [id])
+
+  @@map("comment")
 }
 
 model UserPostVote {
-  userId    String
-  postId    String
+  userId    String   @map("user_id")
+  postId    String   @map("post_id")
   direction Int      @default(0)
-  createdAt DateTime @default(now()) @db.Timestamptz
-  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
   user User @relation(fields: [userId], references: [id])
   post Post @relation(fields: [postId], references: [id])
 
   @@id([userId, postId])
+  @@map("user_post_vote")
 }
 
 model UserCommentVote {
-  userId    String
-  commentId String
+  userId    String   @map("user_id")
+  commentId String   @map("comment_id")
   direction Int      @default(0)
-  createdAt DateTime @default(now()) @db.Timestamptz
-  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
   user    User    @relation(fields: [userId], references: [id])
   comment Comment @relation(fields: [commentId], references: [id])
 
   @@id([userId, commentId])
+  @@map("user_comment_vote")
 }

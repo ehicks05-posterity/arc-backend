@@ -87,13 +87,10 @@ enum Sort {
   TOP
 }
 
-"""A User..."""
 type User {
   commentVotes: [UserCommentVote!]!
   comments: [Comment!]!
   createdAt: DateTime!
-
-  """username"""
   id: ID!
   postVotes: [UserPostVote!]!
   posts: [Post!]!
