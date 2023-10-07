@@ -44,9 +44,9 @@ $$ LANGUAGE plpgsql;
 -- CreateProcedure
 CREATE OR REPLACE PROCEDURE updateScore() AS $$
 	BEGIN
-		update post set net_votes=coalesce(getNetVotes("id", "createdAt"), 0);
+		update post set net_votes=coalesce(getNetVotes("id"), 0);
 		update post set score=coalesce(getScore("id", "createdAt"), 0);
-		update comment set net_votes=coalesce(getCommentNetVotes("id", "createdAt"), 0);
+		update comment set net_votes=coalesce(getCommentNetVotes("id"), 0);
 		update comment set score=coalesce(getCommentScore("id", "createdAt"), 0);
 	END;
 $$ LANGUAGE plpgsql;
