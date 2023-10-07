@@ -2,7 +2,6 @@ import { ApolloServer } from 'apollo-server-express';
 import { ApolloServerPluginInlineTrace } from 'apollo-server-core';
 import { schema } from './schema';
 import prisma from './prisma';
-import { supabase } from './supabase';
 
 const createApolloServer = () => {
   const server = new ApolloServer({
@@ -15,12 +14,7 @@ const createApolloServer = () => {
           }
         : undefined;
 
-      return {
-        prisma,
-        supabase,
-        req,
-        user,
-      };
+      return { prisma, req, user };
     },
     plugins: [ApolloServerPluginInlineTrace()],
   });
