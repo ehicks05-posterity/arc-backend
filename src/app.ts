@@ -4,12 +4,15 @@ import dotenv from 'dotenv';
 dotenv.config();
 import morgan from 'morgan';
 import express, { urlencoded, json } from 'express';
+import http from 'http';
 import cors from 'cors';
 import { expressjwt as jwt } from 'express-jwt';
+import { expressMiddleware } from '@apollo/server/express4';
 import { createApolloServer } from './apollo';
 import prisma from './prisma';
 
 const app = express();
+const httpServer = http.createServer(app);
 app.use(cors({ origin: ['https://arc.ehicks.net', 'http://localhost:3000'] }));
 
 // AUTH
@@ -72,16 +75,34 @@ app.use(checkJwt, async (req, res, next) => {
 app.use('/graphql', checkJwt);
 
 const port = process.env.NODE_ENV === 'production' ? process.env.PORT : 4000;
+const path = 'graphql';
 console.log(`process.env.NODE_ENV: ${process.env.NODE_ENV}`);
 
-async function startApolloServer() {
-  const apolloServer = createApolloServer();
-  await apolloServer.start();
-  apolloServer.applyMiddleware({ app });
-  app.listen({ port });
-  console.log(
-    `🚀 Server ready at http://localhost:${port}${apolloServer.graphqlPath}`,
-  );
-}
+const init = async () => {
+  const server = createApolloServer();
+  await server.start();
+  app.use(
+    '/graphql',
+    cors<cors.CorsRequest>(),
+    json(),
+    expressMiddleware(server, {
+      context: async ({ req }: any) => {
+        const user = req.auth
+          ? {
+              ...req.auth,
+              id: req.auth.sub,
+            }
+          : undefined;
 
-startApolloServer();
+        return { prisma, req, user };
+      },
+    }),
+  );
+
+  await new Promise<void>(resolve => {
+    httpServer.listen({ port }, resolve);
+  });
+  console.log(`🚀 Server ready at http://localhost:${port}/${path}`);
+};
+
+init();
