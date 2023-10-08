@@ -15,6 +15,8 @@
   "dependencies": {
     "@apollo/server": "^4.9.4",
     "@faker-js/faker": "^7.6.0",
+    "@graphql-yoga/plugin-jwt": "^1.1.0",
+    "@graphql-yoga/plugin-response-cache": "^2.2.0",
     "@prisma/client": "^4.13.0",
     "@supabase/supabase-js": "^2.21.0",
     "cors": "^2.8.5",
@@ -24,6 +26,7 @@
     "express-jwt-authz": "^2.4.1",
     "graphql": "^16.8.1",
     "graphql-scalars": "^1.21.3",
+    "graphql-yoga": "^4.0.5",
     "jwks-rsa": "^3.0.1",
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
