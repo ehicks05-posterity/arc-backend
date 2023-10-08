@@ -24,38 +24,6 @@ const checkJwt = jwt({
 });
 
 app.use(morgan('dev'));
-// parse application/x-www-form-urlencoded
-app.use(urlencoded({ extended: false }));
-// parse application/json
-app.use(json());
-// completely disable cache
-app.use((req, res, next) => {
-  res.set('Cache-Control', 'no-store');
-  next();
-});
-
-app.get('/', (req, res) => {
-  res.send('See you at the party Richter!');
-});
-app.get('/test', checkJwt, async (req, res) => {
-  const { user } = req;
-  if (!user) {
-    res.send('not authenticated');
-    return;
-  }
-
-  res.send('authenticated');
-});
-
-app.get('/me', checkJwt, async (req, res) => {
-  const authUser =
-    await prisma.$executeRaw`select * from auth.users where id = ${req?.user?.id};`;
-  res.json({
-    message: 'Hello! This is an authenticated route.',
-    user: req.user,
-    authUser,
-  });
-});
 
 app.use(checkJwt, async (req, res, next) => {
   const username = req.user?.app_metadata?.username;
