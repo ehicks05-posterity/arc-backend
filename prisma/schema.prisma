@@ -31,37 +31,58 @@ model Post {
   content   String
   deleted   Boolean  @default(false)
   netVotes  Int      @default(0) @map("net_votes")
-  score     Float    @default(0)
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
-  author   User?          @relation(fields: [authorId], references: [id])
-  comments Comment[]
-  votes    UserPostVote[]
+  author    User?          @relation(fields: [authorId], references: [id])
+  comments  Comment[]
+  votes     UserPostVote[]
+  postScore PostScore?
 
   // unique to posts
   title String
   link  String
 
-  @@index([score])
   @@index([netVotes])
   @@index([createdAt])
   @@map("post")
 }
 
+model PostScore {
+  id    String @id @default(uuid())
+  score Float  @default(0)
+
+  postId String @unique @map("post_id")
+  post   Post   @relation(fields: [postId], references: [id])
+
+  @@index([score])
+  @@map("post_score")
+}
+
+model CommentScore {
+  id    String @id @default(uuid())
+  score Float  @default(0)
+
+  commentId String  @unique @map("comment_id")
+  comment   Comment @relation(fields: [commentId], references: [id])
+
+  @@index([score])
+  @@map("comment_score")
+}
+
 model Comment {
   id        String   @id @default(uuid())
-  authorId  String?
+  authorId  String?  @map("author_id")
   content   String
   deleted   Boolean  @default(false)
   netVotes  Int      @default(0) @map("net_votes")
-  score     Float    @default(0)
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
-  author   User?             @relation(fields: [authorId], references: [id])
-  comments Comment[]         @relation("CommentToComment")
-  votes    UserCommentVote[]
+  author       User?             @relation(fields: [authorId], references: [id])
+  comments     Comment[]         @relation("CommentToComment")
+  votes        UserCommentVote[]
+  commentScore CommentScore?
 
   // unique to comments
   postId          String  @map("post_id")

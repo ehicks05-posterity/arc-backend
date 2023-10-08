@@ -10,7 +10,8 @@ import {
   nonNull,
   intArg,
 } from 'nexus';
-import { Post } from 'nexus-prisma';
+import { Prisma } from '@prisma/client';
+import { Post, PostScore } from 'nexus-prisma';
 import { adminSeed as _adminSeed, adminNuke as _adminNuke } from './utils';
 import prisma from '../prisma';
 
@@ -25,6 +26,18 @@ export const CommentSort = enumType({
   name: 'CommentSort',
   members: COMMENT_SORTS,
 });
+
+const _PostScore = objectType({
+  name: PostScore.$name,
+  description: PostScore.$description,
+  definition(t) {
+    t.nonNull.field(PostScore.id);
+    t.nonNull.field(PostScore.postId);
+    t.nonNull.field(PostScore.post);
+    t.nonNull.field(PostScore.score);
+  },
+});
+export { _PostScore as PostScore };
 
 const _Post = objectType({
   name: Post.$name,
@@ -41,18 +54,18 @@ const _Post = objectType({
     t.nonNull.list.nonNull.field('comments', {
       type: 'Comment',
       args: { commentSort: 'CommentSort' },
-      async resolve(root, args, ctx) {
+      async resolve(root, args) {
         const { commentSort } = args;
-        const commentSortClause =
+        const commentSortClause: Prisma.Enumerable<Prisma.CommentOrderByWithRelationInput> =
           commentSort === 'BEST'
-            ? { score: 'desc' }
+            ? { commentScore: { score: 'desc' } }
             : commentSort === 'TOP'
-            ? { score: 'desc' }
+            ? { netVotes: 'desc' }
             : commentSort === 'NEW'
             ? { createdAt: 'desc' }
-            : { score: 'desc' };
+            : { commentScore: { score: 'desc' } };
 
-        return ctx.prisma.comment.findMany({
+        return prisma.comment.findMany({
           where: { postId: root.id },
           orderBy: commentSortClause,
         });
@@ -70,11 +83,18 @@ const _Post = objectType({
     t.nonNull.int('netVotes', {
       async resolve(root, _args, ctx) {
         const result = await ctx.prisma
-          .$queryRaw`select getNetVotes(id, "createdAt") as "netVotes" from "Post" where id = ${root.id};`;
+          .$queryRaw`select getNetVotes(id) as "netVotes" from "post" where id = ${root.id};`;
         return result[0].netVotes;
       },
     });
-    t.nonNull.field(Post.score);
+    t.nonNull.float('score', {
+      async resolve(root) {
+        const result = await prisma.postScore.findUnique({
+          where: { postId: root.id },
+        });
+        return result?.score || 0;
+      },
+    });
     t.field('userVote', {
       type: 'UserPostVote',
       resolve(root, args, ctx) {
@@ -97,10 +117,12 @@ export { _Post as Post };
 
 // TODO: these are types & constants for POSTS query, consider breaking out
 type SortKey = (typeof SORTS)[number];
-type OrderByClause = Record<string, 'asc' | 'desc'>;
 
-const sortToOrderByClause: Record<SortKey, OrderByClause> = {
-  HOT: { score: 'desc' },
+const sortToOrderByClause: Record<
+  SortKey,
+  Prisma.Enumerable<Prisma.PostOrderByWithRelationInput>
+> = {
+  HOT: { postScore: { score: 'desc' } },
   TOP: { netVotes: 'desc' },
   NEW: { createdAt: 'desc' },
 };
@@ -119,7 +141,11 @@ export const getPosts = queryField('getPosts', {
 
     const orderBy = sortToOrderByClause[sort || 'HOT'];
 
-    return prisma.post.findMany({ skip, take: PAGE_SIZE, orderBy });
+    return prisma.post.findMany({
+      skip,
+      take: PAGE_SIZE,
+      orderBy,
+    });
   },
 });
 
@@ -136,15 +162,15 @@ export const createPostInput = inputObjectType({
   name: 'createPostInput',
   definition(t) {
     t.nonNull.string('title');
-    t.string('link');
-    t.string('content');
+    t.nonNull.string('link');
+    t.nonNull.string('content');
   },
 });
 
 export const createPost = mutationField('createPost', {
   type: 'Post',
   args: { input: nonNull(createPostInput) },
-  resolve(_, args, ctx) {
+  async resolve(_, args, ctx) {
     const authorId = ctx.user?.id;
     if (!authorId) throw new Error('Author is required');
 
@@ -155,7 +181,9 @@ export const createPost = mutationField('createPost', {
       link,
       content,
     };
-    return ctx.prisma.post.create({ data });
+    const post = await prisma.post.create({ data });
+    await prisma.postScore.create({ data: { postId: post.id, score: 0 } });
+    return post;
   },
 });
 

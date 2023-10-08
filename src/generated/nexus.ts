@@ -30,13 +30,13 @@ declare global {
 export interface NexusGenInputs {
   createCommentInput: { // input type
     content: string; // String!
-    level?: number | null; // Int
+    level: number; // Int!
     parentCommentId?: string | null; // String
     postId: string; // String!
   }
   createPostInput: { // input type
-    content?: string | null; // String
-    link?: string | null; // String
+    content: string; // String!
+    link: string; // String!
     title: string; // String!
   }
   createUserCommentVoteInput: { // input type
@@ -82,8 +82,12 @@ export interface NexusGenObjects {
     level: number; // Int!
     parentCommentId?: string | null; // String
     postId: string; // String!
-    score: number; // Float!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  CommentScore: { // root type
+    commentId: string; // String!
+    id: string; // ID!
+    score: number; // Float!
   }
   Mutation: {};
   Post: { // root type
@@ -93,16 +97,20 @@ export interface NexusGenObjects {
     deleted: boolean; // Boolean!
     id: string; // ID!
     link: string; // String!
-    score: number; // Float!
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  PostScore: { // root type
+    id: string; // ID!
+    postId: string; // String!
+    score: number; // Float!
   }
   Query: {};
   User: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: string; // ID!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
-    username: string; // String!
+    username?: string | null; // String
   }
   UserCommentVote: { // root type
     commentId: string; // String!
@@ -149,6 +157,12 @@ export interface NexusGenFieldTypes {
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     userVote: NexusGenRootTypes['UserCommentVote'] | null; // UserCommentVote
   }
+  CommentScore: { // field return type
+    comment: NexusGenRootTypes['Comment']; // Comment!
+    commentId: string; // String!
+    id: string; // ID!
+    score: number; // Float!
+  }
   Mutation: { // field return type
     adminNuke: string | null; // String
     adminSeed: string | null; // String
@@ -181,6 +195,12 @@ export interface NexusGenFieldTypes {
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     userVote: NexusGenRootTypes['UserPostVote'] | null; // UserPostVote
   }
+  PostScore: { // field return type
+    id: string; // ID!
+    post: NexusGenRootTypes['Post']; // Post!
+    postId: string; // String!
+    score: number; // Float!
+  }
   Query: { // field return type
     getCommentById: NexusGenRootTypes['Comment'] | null; // Comment
     getComments: Array<NexusGenRootTypes['Comment'] | null> | null; // [Comment]
@@ -198,7 +218,7 @@ export interface NexusGenFieldTypes {
     postVotes: NexusGenRootTypes['UserPostVote'][]; // [UserPostVote!]!
     posts: NexusGenRootTypes['Post'][]; // [Post!]!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
-    username: string; // String!
+    username: string | null; // String
   }
   UserCommentVote: { // field return type
     comment: NexusGenRootTypes['Comment']; // Comment!
@@ -239,6 +259,12 @@ export interface NexusGenFieldTypeNames {
     updatedAt: 'DateTime'
     userVote: 'UserCommentVote'
   }
+  CommentScore: { // field return type name
+    comment: 'Comment'
+    commentId: 'String'
+    id: 'ID'
+    score: 'Float'
+  }
   Mutation: { // field return type name
     adminNuke: 'String'
     adminSeed: 'String'
@@ -270,6 +296,12 @@ export interface NexusGenFieldTypeNames {
     title: 'String'
     updatedAt: 'DateTime'
     userVote: 'UserPostVote'
+  }
+  PostScore: { // field return type name
+    id: 'ID'
+    post: 'Post'
+    postId: 'String'
+    score: 'Float'
   }
   Query: { // field return type name
     getCommentById: 'Comment'

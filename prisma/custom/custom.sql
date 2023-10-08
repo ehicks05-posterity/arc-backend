@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION getNetVotes(id text) RETURNS integer AS $$
 	DECLARE
 		netVotes integer = 0;
 	BEGIN
-		netVotes = (select sum(direction) from user_post_vote where post_id = id);
+		netVotes = (select sum(direction) from arc.user_post_vote where post_id = id);
 		RETURN coalesce(netVotes, 0);
 	END;
 $$ LANGUAGE plpgsql;
@@ -22,7 +22,7 @@ CREATE OR REPLACE FUNCTION getCommentNetVotes(id text) RETURNS integer AS $$
 	DECLARE
 		netVotes integer = 0;
 	BEGIN
-		netVotes = (select sum(direction) from user_comment_vote where comment_id = id);
+		netVotes = (select sum(direction) from arc.user_comment_vote where comment_id = id);
 		RETURN coalesce(netVotes, 0);
 	END;
 $$ LANGUAGE plpgsql;
@@ -44,10 +44,31 @@ $$ LANGUAGE plpgsql;
 -- CreateProcedure
 CREATE OR REPLACE PROCEDURE updateScore() AS $$
 	BEGIN
-		update post set net_votes=coalesce(getNetVotes("id"), 0);
-		update post set score=coalesce(getScore("id", "createdAt"), 0);
-		update comment set net_votes=coalesce(getCommentNetVotes("id"), 0);
-		update comment set score=coalesce(getCommentScore("id", "createdAt"), 0);
+		set search_path = arc;
+
+		update arc.post set net_votes=coalesce(getNetVotes("id"), 0);
+				
+		update
+			post_score
+		set
+			score = coalesce(getScore(post.id, post.created_at), 0)
+		from
+			post
+		where
+			post.id = post_score.post_id;
+
+
+		update arc.comment set net_votes=coalesce(getCommentNetVotes("id"), 0);
+			
+		update
+			comment_score
+		set
+			score = coalesce(getCommentScore(comment.id, comment.created_at), 0)
+		from
+			comment
+		where
+			comment.id = comment_score.comment_id;
+
 	END;
 $$ LANGUAGE plpgsql;
 

@@ -7,7 +7,20 @@ import {
   inputObjectType,
   nonNull,
 } from 'nexus';
-import { Comment } from 'nexus-prisma';
+import { Comment, CommentScore } from 'nexus-prisma';
+import prisma from '../prisma';
+
+const _CommentScore = objectType({
+  name: CommentScore.$name,
+  description: CommentScore.$description,
+  definition(t) {
+    t.nonNull.field(CommentScore.id);
+    t.nonNull.field(CommentScore.commentId);
+    t.nonNull.field(CommentScore.comment);
+    t.nonNull.field(CommentScore.score);
+  },
+});
+export { _CommentScore as CommentScore };
 
 const _Comment = objectType({
   name: Comment.$name,
@@ -24,13 +37,20 @@ const _Comment = objectType({
     t.field(Comment.parentComment);
     t.field(Comment.parentCommentId);
     t.nonNull.field(Comment.comments);
-    t.nonNull.field(Comment.score);
+    t.nonNull.float('score', {
+      async resolve(root) {
+        const result = await prisma.commentScore.findUnique({
+          where: { commentId: root.id },
+        });
+        return result?.score || 0;
+      },
+    });
     t.nonNull.field(Comment.createdAt);
     t.nonNull.field(Comment.updatedAt);
     t.nonNull.int('netVotes', {
       async resolve(root, _args, ctx) {
         const result = await ctx.prisma
-          .$queryRaw`select getCommentNetVotes(id, "createdAt") as "netVotes" from "Comment" where id = ${root.id};`;
+          .$queryRaw`select getCommentNetVotes(id) as "netVotes" from "comment" where id = ${root.id};`;
         return result[0].netVotes;
       },
     });
@@ -74,7 +94,7 @@ export const createCommentInput = inputObjectType({
   definition(t) {
     t.nonNull.string('postId');
     t.string('parentCommentId');
-    t.int('level');
+    t.nonNull.int('level');
     t.nonNull.string('content');
   },
 });
@@ -82,7 +102,7 @@ export const createCommentInput = inputObjectType({
 export const createComment = mutationField('createComment', {
   type: 'Comment',
   args: { input: nonNull(createCommentInput) },
-  resolve(_, args, ctx) {
+  async resolve(_, args, ctx) {
     const authorId = ctx.user?.id;
     if (!authorId) throw new Error('Author is required');
 
@@ -96,7 +116,9 @@ export const createComment = mutationField('createComment', {
       level,
       content,
     };
-    return ctx.prisma.comment.create({ data });
+    const comment = await prisma.comment.create({ data });
+    await prisma.commentScore.create({ data: { commentId: comment.id, score: 0 } });
+    return comment;
   },
 });
 

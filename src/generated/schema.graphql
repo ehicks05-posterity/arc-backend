@@ -21,6 +21,13 @@ type Comment {
   userVote: UserCommentVote
 }
 
+type CommentScore {
+  comment: Comment!
+  commentId: String!
+  id: ID!
+  score: Float!
+}
+
 enum CommentSort {
   BEST
   NEW
@@ -71,6 +78,13 @@ type Post {
   userVote: UserPostVote
 }
 
+type PostScore {
+  id: ID!
+  post: Post!
+  postId: String!
+  score: Float!
+}
+
 type Query {
   getCommentById(id: ID): Comment
   getComments: [Comment]
@@ -95,7 +109,7 @@ type User {
   postVotes: [UserPostVote!]!
   posts: [Post!]!
   updatedAt: DateTime!
-  username: String!
+  username: String
 }
 
 type UserCommentVote {
@@ -120,14 +134,14 @@ type UserPostVote {
 
 input createCommentInput {
   content: String!
-  level: Int
+  level: Int!
   parentCommentId: String
   postId: String!
 }
 
 input createPostInput {
-  content: String
-  link: String
+  content: String!
+  link: String!
   title: String!
 }
 
