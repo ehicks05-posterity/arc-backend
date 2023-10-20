@@ -1,10 +1,11 @@
-import { makeSchema } from 'nexus';
-import { types } from './api/index';
+import { writeFileSync } from 'fs';
+import { printSchema, lexicographicSortSchema } from 'graphql';
+import './schema/index';
+import { builder } from './builder';
 
-export const schema = makeSchema({
-  outputs: {
-    schema: `${__dirname}/generated/schema.graphql`,
-    typegen: `${__dirname}/generated/nexus.ts`,
-  },
-  types,
-});
+const schema = builder.toSchema();
+
+const schemaAsString = printSchema(lexicographicSortSchema(schema));
+writeFileSync('./src/generated/schema.graphql', schemaAsString);
+
+export { schema };

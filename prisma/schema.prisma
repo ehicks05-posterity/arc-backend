@@ -2,8 +2,8 @@ generator client {
   provider = "prisma-client-js"
 }
 
-generator nexusPrisma {
-  provider = "nexus-prisma"
+generator pothos {
+  provider = "prisma-pothos-types"
 }
 
 datasource db {
@@ -16,6 +16,7 @@ model User {
   username  String?
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  deleted   Boolean  @default(false)
 
   posts        Post[]
   comments     Comment[]

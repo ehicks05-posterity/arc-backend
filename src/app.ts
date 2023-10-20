@@ -6,28 +6,38 @@ import { createServer } from 'node:http';
 import { createYoga } from 'graphql-yoga';
 import { useJWT } from '@graphql-yoga/plugin-jwt';
 import { useResponseCache } from '@graphql-yoga/plugin-response-cache';
-import prisma from './prisma';
+import { JwtPayload, verify } from 'jsonwebtoken';
 import { schema } from './schema';
+
+const JWT_SECRET = process.env.SUPABASE_JWT_SECRET || '';
 
 const port = process.env.NODE_ENV === 'production' ? process.env.PORT : 4000;
 console.log(`process.env.NODE_ENV: ${process.env.NODE_ENV}`);
 
+const decodeToken = (request: Request): JwtPayload | null => {
+  const header = request.headers.get('authorization');
+  if (header !== null) {
+    const token = header.split(' ')[1];
+    const tokenPayload = verify(token, JWT_SECRET) as JwtPayload;
+    return tokenPayload;
+  }
+
+  return null;
+};
+
 const yoga = createYoga({
   schema,
-  context: async ({ req }: any) => {
-    const user = req.auth
-      ? {
-          ...req.auth,
-          id: req.auth.sub,
-        }
-      : undefined;
+  context: async ({ request }: { request: Request }) => {
+    const token = decodeToken(request);
+    const user = token ? { ...token, id: token.sub } : undefined;
+    const userId = user?.id;
 
-    return { prisma, req, user };
+    return { request, user, userId };
   },
   plugins: [
     useJWT({
-      issuer: `${process.env.SUPABASE_URL}/auth/v1`,
-      signingKey: process.env.SUPABASE_JWT_SECRET || '',
+      issuer: `https://${process.env.SUPABASE_URL}/auth/v1`,
+      signingKey: JWT_SECRET,
       audience: 'authenticated',
       algorithms: ['HS256'],
     }),

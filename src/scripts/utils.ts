@@ -1,14 +1,16 @@
 import { sample, sampleSize } from 'lodash';
 import { faker } from '@faker-js/faker';
-import { Comment } from '@prisma/client';
+import { Comment, User } from '@prisma/client';
 import prisma from '../prisma';
 
 export const adminNuke = async () => {
-  await prisma.userPostVote.deleteMany();
-  await prisma.userCommentVote.deleteMany();
   await prisma.comment.deleteMany();
+  await prisma.commentScore.deleteMany();
   await prisma.post.deleteMany();
+  await prisma.postScore.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.userCommentVote.deleteMany();
+  await prisma.userPostVote.deleteMany();
 };
 
 const POST_COUNT = 80;
@@ -17,20 +19,16 @@ const MAX_COMMENTS_PER_POST = 50;
 const MAX_VOTES_PER_POST = USER_COUNT;
 const MAX_VOTES_PER_COMMENT = USER_COUNT / 10;
 
-export const adminSeed = async () => {
-  console.log('creating users...');
-  await prisma.user.createMany({
-    data: [...Array(USER_COUNT)].map(() => {
-      const username = faker.internet.userName();
-      return {
-        id: username,
-        username,
-      };
-    }),
+const createUsers = async () => {
+  const data = [...Array(USER_COUNT)].map(() => {
+    const username = faker.internet.userName();
+    return { id: username, username };
   });
-  const users = await prisma.user.findMany();
+  await prisma.user.createMany({ data });
+  return prisma.user.findMany();
+};
 
-  console.log('creating posts...');
+const createPosts = async (users: User[]) => {
   await prisma.post.createMany({
     data: [...Array(POST_COUNT)].map(() => ({
       title: faker.hacker.phrase(),
@@ -40,12 +38,24 @@ export const adminSeed = async () => {
     })),
   });
   const posts = await prisma.post.findMany();
+  await prisma.postScore.createMany({
+    data: posts.map(p => ({ postId: p.id, score: 0 })),
+  });
+  return posts;
+};
 
-  console.log('for each post, creating comments...');
+export const adminSeed = async () => {
+  console.log('creating users...');
+  const users = await createUsers();
+
+  console.log('creating posts and postScores...');
+  const posts = await createPosts(users);
+
+  console.log('for each post, creating comments and commentScores...');
   const commentPromises = posts.map(async p => {
     const comments: Comment[] = [];
-    const commentCount = Math.random() * MAX_COMMENTS_PER_POST;
-    while (comments.length < commentCount) {
+    const commentsForThisPost = Math.random() * MAX_COMMENTS_PER_POST;
+    while (comments.length < commentsForThisPost) {
       // aim for 25% to be roots, 75% to be children
       const isChild = comments.length > 0 && Math.random() > 0.25;
       const parent = isChild ? sample(comments) : undefined;
@@ -63,6 +73,9 @@ export const adminSeed = async () => {
   });
   await Promise.all(commentPromises);
   const comments = await prisma.comment.findMany();
+  await prisma.commentScore.createMany({
+    data: comments.map(c => ({ commentId: c.id, score: 0 })),
+  });
 
   const UPVOTE_RATIO = Math.random() / 2 + 0.5; // targeting 0.5-1.0
 
