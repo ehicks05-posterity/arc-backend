@@ -1,3 +1,6 @@
+> [!IMPORTANT] 
+> 3/13/2025: All backend functionality provided by this repo has been added directly into https://github.com/ehicks05/arc.
+
 # arc-backend
 
 ## Prereqs
